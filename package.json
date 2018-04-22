@@ -15,13 +15,15 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "chance": "^1.0.13",
     "js-yaml": "^3.11.0",
     "jsplumb": "^2.6.9",
     "lodash": "^4.17.5",
-    "materialize-css": "^1.0.0-beta",
     "uuid": "^3.2.1",
     "vue": "^2.5.2",
-    "vue-async-computed": "^3.3.1"
+    "vue-async-computed": "^3.3.1",
+    "vue-drag-drop": "^0.2.4",
+    "vuetify": "^1.0.16"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

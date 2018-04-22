@@ -19,7 +19,7 @@ export default class WorkflowService {
 
   addBlockToWorkflowById (workflowId, block) {
     const workflow = this.getWorkflow(workflowId)
-    if(workflow) {
+    if (workflow) {
       workflow.addBlock(block)
     }
   }
@@ -30,7 +30,7 @@ export default class WorkflowService {
 
   removeBlockFromWorkflowById (workflowId, block) {
     const workflow = this.getWorkflow(workflowId)
-    if(workflow) {
+    if (workflow) {
       workflow.removeBlock(block)
     }
   }

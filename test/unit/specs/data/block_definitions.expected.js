@@ -2,6 +2,7 @@ export default [
   {
     name: 'SecuredKafkaInput',
     type: 'input',
+    color: 'blue',
     config: {
       'topic': '',
       'broker': '',
@@ -11,6 +12,7 @@ export default [
   {
     name: 'FilterMiddleware',
     type: 'middleware',
+    color: 'orange',
     config: {
       'filter': ''
     }
@@ -18,6 +20,7 @@ export default [
   {
     name: 'HbaseOutput',
     type: 'output',
+    color: 'purple',
     config: {
       'id': ''
     }

@@ -1,7 +1,16 @@
 export default {
   blockTypes: {
-    input: 'input',
-    middleware: 'middleware',
-    output: 'output'
+    input: {
+      value: 'input',
+      color: 'blue'
+    },
+    middleware: {
+      value: 'middleware',
+      color: 'orange'
+    },
+    output: {
+      value: 'output',
+      color: 'purple'
+    }
   }
 }

@@ -1,12 +1,16 @@
+import _ from 'lodash'
 export default class Workflow {
-  blocks = new Map();
-
+  blocks = []
+  index = {}
   constructor (id) {
     this.id = id
   }
 
   addBlock (block) {
-    this.blocks.set(block.id, block)
+    if (!this.index[block.id]) {
+      this.blocks.push(block)
+      this.index[block.id] = block
+    }
   }
 
   removeBlock (block) {
@@ -14,14 +18,18 @@ export default class Workflow {
   }
 
   removeBlockById (id) {
-    this.blocks.delete(id)
+    if (this.index[id]) {
+      delete this.index[id]
+      const elementIndex = _.findIndex(this.blocks, {id: id})
+      this.blocks.splice(elementIndex, 1)
+    }
   }
 
   getBlock (id) {
-    return this.blocks.get(id)
+    return this.index[id]
   }
 
   get blockNumber () {
-    return this.blocks.size
+    return this.blocks.length
   }
 }

@@ -6,4 +6,9 @@ export default class Block {
     this.clazz = clazz
     this.fields = fields
   }
+
+  setPosition (positionX, positionY) {
+    this.positionX = positionX
+    this.positionY = positionY
+  }
 }

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import _ from 'lodash'
-
+import constants from '../constants/constants'
 export default class BlocService {
   getDefinitions () {
     return axios.get('static/bloc-definitions.json').then(res => {
@@ -10,10 +10,12 @@ export default class BlocService {
         const name = key
         const config = value.config
         const type = value.type
+        const color = constants.blockTypes[type].color
         result.push({
           config,
           type,
-          name
+          name,
+          color
         })
       }, [])
     })
