@@ -1,4 +1,4 @@
-# edimus
+# Blox
 
 > A Vue.js project
 

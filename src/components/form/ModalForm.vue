@@ -1,12 +1,16 @@
 <template>
-  <v-dialog v-model="state.formState" max-width="290">
+  <v-dialog v-model="state.formState" max-width="500">
     <v-card class="white">
-      <v-card-title class="headline">Use Google's location service?</v-card-title>
-      <v-card-text>Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.</v-card-text>
+      <v-card-title>
+        <span class="headline">{{state.currentBlock.clazz}}</span>
+      </v-card-title>
+      <v-card-text>
+              <v-text-field v-model="state.currentBlock.name" label="Name"></v-text-field>
+              <v-text-field v-for="(value, key) in state.currentBlock.fields" v-bind:label="key | capitalize" v-model="state.currentBlock[key]" v-bind:key="key"></v-text-field>
+      </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="green darken-1" flat="flat" @click.native="state.formState = false">Disagree</v-btn>
-        <v-btn color="green darken-1" flat="flat" @click.native="state.formState = false">Agree</v-btn>
+        <v-btn color="blue darken-1" flat @click.native="close">Close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -19,14 +23,19 @@ export default {
   inject: ['stateService'],
   data () {
     return {
-      state: this.stateService.state,
-      tiles: [
-        {img: 'keep.png', title: 'Keep'},
-        {img: 'inbox.png', title: 'Inbox'},
-        {img: 'hangouts.png', title: 'Hangouts'},
-        {img: 'messenger.png', title: 'Messenger'},
-        {img: 'google.png', title: 'Google+'}
-      ]
+      state: this.stateService.state
+    }
+  },
+  methods: {
+    close () {
+      this.stateService.setFormState(false)
+    }
+  },
+  filters: {
+    capitalize: function (value) {
+      if (!value) return ''
+      value = value.toString()
+      return value.charAt(0).toUpperCase() + value.slice(1)
     }
   },
   components: {}

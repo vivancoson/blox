@@ -7,6 +7,7 @@
 
 <script>
 
+import _ from 'lodash'
 import ZMainBlock from './MainboardBlock'
 import Workflow from '../../models/workflow'
 import Block from '../../models/block'
@@ -22,8 +23,9 @@ export default {
   },
   methods: {
     handleDrop ({def}, event) {
-      const block = new Block(this.uuidService.uuid(), this.nameService.name, def.type, def.name, def.config)
+      const block = new Block(this.uuidService.uuid(), this.nameService.name, def.type, def.name, _.cloneDeep(def.config))
       block.setPosition(event.pageX, event.pageY)
+      console.log(block)
       this.workflowService.addBlockToWorkflowById(0, block)
     }
   },

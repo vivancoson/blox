@@ -1,5 +1,5 @@
 <template>
-  <v-container id="app">
+  <v-container id="app" fluid>
     <v-layout row wrap>
       <v-flex xs2>
         <z-side-board></z-side-board>
@@ -7,8 +7,8 @@
       <v-flex xs10>
         <z-main-board></z-main-board>
       </v-flex>
+      <z-modal-form></z-modal-form>
     </v-layout>
-    <z-modal-form></z-modal-form>
   </v-container>
 </template>
 
