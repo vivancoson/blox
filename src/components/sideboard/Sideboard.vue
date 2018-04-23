@@ -11,7 +11,6 @@ import ZSideBlock from './SideboardBlock'
 export default {
   name: 'ZSideboard',
   inject: ['blockService'],
-
   asyncComputed: {
     defs: {
       get () {

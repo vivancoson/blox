@@ -1,6 +1,6 @@
 <template>
-  <drop class="drop mainboard" @drop="handleDrop">
-      <z-main-block v-for="block in blocks" v-bind:block="block" v-bind:key="block.id">
+  <drop id="container" class="drop mainboard" @drop="handleDrop">
+      <z-main-block v-bind:id="block.id" v-for="block in blocks" v-bind:block="block" v-bind:key="block.id">
       </z-main-block>
   </drop>
 </template>
@@ -14,7 +14,7 @@ import Block from '../../models/block'
 
 export default {
   name: 'ZMainBoard',
-  inject: ['workflowService', 'uuidService', 'nameService', 'stateService'],
+  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService'],
   components: {ZMainBlock},
   data () {
     return {
@@ -22,11 +22,14 @@ export default {
     }
   },
   methods: {
-    handleDrop ({def}, event) {
-      const block = new Block(this.uuidService.uuid(), this.nameService.name, def.type, def.name, _.cloneDeep(def.config))
-      block.setPosition(event.pageX, event.pageY)
-      console.log(block)
-      this.workflowService.addBlockToWorkflowById(0, block)
+    handleDrop (data, event) {
+      if (data) {
+        const def = data.def
+        const block = new Block(this.uuidService.uuid(), this.nameService.name, def.type, def.name, _.cloneDeep(def.config))
+        block.setPosition(event.offsetX - 60, event.offsetY - 50)
+        this.workflowService.addBlockToWorkflowById(0, block)
+        this.stateService.setViewerDirty(true)
+      }
     }
   },
   created () {
@@ -40,6 +43,7 @@ export default {
 
 <style scoped>
   .mainboard {
-    height: 1980px;
+    height: 100vh;
+    position: relative;
   }
 </style>

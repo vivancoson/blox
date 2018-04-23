@@ -9,6 +9,7 @@
       </v-flex>
       <z-modal-form></z-modal-form>
     </v-layout>
+    <z-viewer></z-viewer>
   </v-container>
 </template>
 
@@ -16,6 +17,7 @@
 import ZSideBoard from './components/sideboard/Sideboard'
 import ZMainBoard from './components/mainboard/Mainboard'
 import ZModalForm from './components/form/ModalForm'
+import ZViewer from './components/viewer/Viewer.vue'
 
 export default {
   name: 'App',
@@ -26,7 +28,8 @@ export default {
   components: {
     ZSideBoard,
     ZMainBoard,
-    ZModalForm
+    ZModalForm,
+    ZViewer
   }
 }
 </script>
@@ -34,7 +37,5 @@ export default {
 <style>
 #app {
   font-family: 'Roboto', sans-serif;
-  text-align: center;
-  margin-top: 60px;
 }
 </style>

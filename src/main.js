@@ -5,6 +5,7 @@ import AsyncComputed from 'vue-async-computed'
 import VueDragDrop from 'vue-drag-drop'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import 'prismjs/themes/prism.css'
 
 import App from './App'
 import BlockService from './services/block_service'

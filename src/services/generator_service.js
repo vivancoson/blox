@@ -1,11 +1,18 @@
 import _ from 'lodash'
+import Prism from 'prismjs'
+import loadLanguages from 'prismjs/components/index'
+import {safeDump} from 'js-yaml'
 
 export default class GeneratorService {
+  constructor () {
+    loadLanguages(['yaml'])
+  }
+
   generate (worflow, connections) {
     const connectionsByTarget = _.groupBy(connections, 'targetId')
     const result = {}
-    worflow.blocks.forEach((value, key) => {
-      const sources = _.chain(connectionsByTarget[key] || [])
+    worflow.blocks.forEach((value) => {
+      const sources = _.chain(connectionsByTarget[value.id] || [])
         .map((connection) => worflow.getBlock(connection.sourceId).name)
         .uniq()
         .sort()
@@ -15,10 +22,19 @@ export default class GeneratorService {
       const clazz = value.clazz
       result[name] = {
         class: clazz,
-        config,
-        sources
+        config
+      }
+      if (sources && sources.length > 0) {
+        result[name].sources = sources
       }
     })
-    return result
+    if (Object.keys(result).length > 0) {
+      const yamlCode = safeDump(result, {
+        'sortKeys': true
+      })
+      return Prism.highlight(yamlCode, Prism.languages.yaml, 'yaml')
+    } else {
+      return ''
+    }
   }
 }

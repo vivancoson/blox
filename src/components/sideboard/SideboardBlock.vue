@@ -1,8 +1,8 @@
 <template>
     <drag class="drag" :transfer-data="{def}">
-          <div v-bind:class="def.color" ref="myElement" class="pa-2 ma-2 elevation-5 sideboard-block white--text">
+          <div v-bind:class="def.color" class="pa-2 ma-2 elevation-5 sideboard-block white--text">
             <div>
-              <h5 class="block-title">{{def.name}}</h5>
+              <h5 v-once class="block-title">{{def.name}}</h5>
             </div>
           </div>
     </drag>

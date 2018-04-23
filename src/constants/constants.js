@@ -12,5 +12,10 @@ export default {
       value: 'output',
       color: 'purple'
     }
+  },
+  connectionEvents: {
+    attached: 'connection',
+    detached: 'connectionDetached',
+    moved: 'connectionMoved'
   }
 }

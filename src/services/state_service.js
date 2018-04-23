@@ -1,29 +1,39 @@
 export default class StateService {
   state = {
-    currentWorkflow: {},
-    currentBlock: {},
-    formState: false
+    workflow: {
+      currentWorkflow: {},
+      currentBlock: {}
+    },
+    form: {
+      state: false
+    },
+    viewerDirty: false
+
   }
 
   setCurrentBlock (block) {
-    this.state.currentBlock = block
+    this.state.workflow.currentBlock = block
   }
 
   setCurrentWorkflow (workflow) {
-    this.state.currentWorkflow = workflow
+    this.state.workflow.currentWorkflow = workflow
   }
 
   setFormState (formState) {
-    this.state.formState = formState
+    this.state.form.state = formState
+  }
+
+  setViewerDirty (dirty) {
+    this.state.viewerDirty = dirty
   }
 
   get currentWorkflow () {
-    return this.state.currentWorkflow
+    return this.state.workflow.currentWorkflow
   }
   get currentBlock () {
-    return this.state.currentBlock
+    return this.state.workflow.currentBlock
   }
   get currentFormState () {
-    return this.state.currentFormState
+    return this.state.form.state
   }
 }
