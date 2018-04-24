@@ -1,8 +1,11 @@
 <template>
   <div class="yaml-viewer">
-    <pre class="yaml-code">
-      <code class="pa-1" v-html="yaml"></code>
-    </pre>
+    <v-navigation-drawer hide-overlay stateless clipped justify-center height ="auto" right absolute v-model="state.viewer.drawer">
+        <code class="pa-1" v-html="yaml"></code>
+    </v-navigation-drawer>
+    <v-layout justify-end absolute>
+      <v-btn @click.stop="state.viewer.drawer = !state.viewer.drawer" dark color="pink">view yaml</v-btn>
+    </v-layout>
   </div>
 </template>
 
@@ -19,7 +22,7 @@ export default {
   computed: {
     yaml () {
       this.stateService.setViewerDirty(false)
-      return this.generatorService.generate(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(), this.state.viewerDirty)
+      return this.generatorService.generate(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(), this.state.viewer.viewerDirty)
     }
   },
   created () {

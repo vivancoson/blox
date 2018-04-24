@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="form.state" max-width="500">
-    <v-card class="white">
+    <v-card>
       <v-card-title>
         <span class="headline">{{blockCopy.clazz}}</span>
       </v-card-title>

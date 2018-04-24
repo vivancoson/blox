@@ -7,8 +7,13 @@ export default class StateService {
     form: {
       state: false
     },
-    viewerDirty: false
-
+    viewer: {
+      viewerDirty: false,
+      drawer: false
+    },
+    navigator: {
+      drawer: true
+    }
   }
 
   setCurrentBlock (block) {
@@ -24,16 +29,32 @@ export default class StateService {
   }
 
   setViewerDirty (dirty) {
-    this.state.viewerDirty = dirty
+    this.state.viewer.viewerDirty = dirty
+  }
+
+  setDrawerOpen (open) {
+    this.state.navigator.drawer = open
+  }
+  setViewerDrawerOpen (open) {
+    this.state.viewer.drawer = open
   }
 
   get currentWorkflow () {
     return this.state.workflow.currentWorkflow
   }
+
   get currentBlock () {
     return this.state.workflow.currentBlock
   }
   get currentFormState () {
     return this.state.form.state
+  }
+
+  get currentViewerState () {
+    return this.currentViewerState.viewer
+  }
+
+  get currentNavigatorState () {
+    return this.state.navigator
   }
 }

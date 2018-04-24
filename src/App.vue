@@ -1,16 +1,20 @@
 <template>
-  <v-container id="app" fluid>
+  <v-app dark id="app" fluid>
     <v-layout row wrap>
-      <v-flex xs2>
-        <z-side-board></z-side-board>
-      </v-flex>
-      <v-flex xs10>
+      <v-toolbar color="blue" dense fixed app>
+        <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
+        <v-toolbar-title class="mr-5 align-center">
+          <span class="title">Editor</span>
+        </v-toolbar-title>
+      </v-toolbar>
+      <z-side-board></z-side-board>
+      <v-flex xs12>
         <z-main-board></z-main-board>
       </v-flex>
       <z-modal-form></z-modal-form>
     </v-layout>
-    <z-viewer></z-viewer>
-  </v-container>
+    <z-viewer absolute></z-viewer>
+  </v-app>
 </template>
 
 <script>
@@ -21,8 +25,10 @@ import ZViewer from './components/viewer/Viewer.vue'
 
 export default {
   name: 'App',
-  data () {
-    return {
+  inject: ['stateService'],
+  methods: {
+    switchDrawer () {
+      this.stateService.setDrawerOpen(!this.stateService.state.navigator.drawer)
     }
   },
   components: {
@@ -37,5 +43,9 @@ export default {
 <style>
 #app {
   font-family: 'Roboto', sans-serif;
+}
+.navigation-drawer {
+  height: auto;
+  padding: 0px;
 }
 </style>

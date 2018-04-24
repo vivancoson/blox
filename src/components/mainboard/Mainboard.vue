@@ -1,7 +1,7 @@
 <template>
   <drop id="container" class="drop mainboard" @drop="handleDrop">
-      <z-main-block v-bind:id="block.id" v-for="block in blocks" v-bind:block="block" v-bind:key="block.id">
-      </z-main-block>
+    <z-main-block v-bind:id="block.id" v-for="block in blocks" v-bind:block="block" v-bind:key="block.id">
+    </z-main-block>
   </drop>
 </template>
 
