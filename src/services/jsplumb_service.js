@@ -3,8 +3,10 @@ import _ from 'lodash'
 import constants from '../constants/constants'
 
 export default class JsPlumbService {
-  constructor () {
-    this.instance = jsPlumb.getInstance({
+  instances = {
+  }
+  createInstance () {
+    return jsPlumb.getInstance({
       Container: 'container',
       Connector: 'StateMachine',
       Anchor: ['Perimeter', { shape: 'Square' }],
@@ -22,24 +24,40 @@ export default class JsPlumbService {
       ]
     })
   }
-  getAllConnections () {
-    return this.instance.getAllConnections()
+
+  getInstance (workflow) {
+    if (!this.instances[workflow.id]) {
+      this.instances[workflow.id] = {
+        instance: this.createInstance(),
+        hasListener: false
+      }
+    }
+    return this.instances[workflow.id]
   }
-  listenToConnectionChanges (handler) {
-    _.forOwn(constants.connectionEvents, (value) => {
-      this.instance.bind(value, handler)
-    })
+
+  getAllConnections (workflow) {
+    return this.getInstance(workflow).instance.getAllConnections()
   }
-  removeConnections (block) {
-    this.instance.remove(block.id)
+  listenToConnectionChanges (workflow, handler) {
+    const instance = this.getInstance(workflow)
+    if (!instance.hasListener) {
+      _.forOwn(constants.connectionEvents, (value) => {
+        instance.instance.bind(value, handler)
+      })
+      instance.hasListener = true
+    }
   }
-  initiateBLock (block) {
-    this.instance.draggable(block.id, {
+  removeConnections (workflow, block) {
+    this.getInstance(workflow).instance.remove(block.id)
+  }
+  initiateBlock (workflow, block) {
+    const instance = this.getInstance(workflow).instance
+    instance.draggable(block.id, {
       containment: 'true'
     })
 
     if (block.type !== constants.blockTypes.output.value) {
-      this.instance.makeSource(block.id, {
+      instance.makeSource(block.id, {
         filter: '.ep',
         anchor: 'Continuous',
         connectorStyle: {
@@ -55,7 +73,7 @@ export default class JsPlumbService {
     }
 
     if (block.type !== constants.blockTypes.input.value) {
-      this.instance.makeTarget(block.id, {
+      instance.makeTarget(block.id, {
         anchor: 'Continuous',
         allowLoopback: false,
         maxConnections: -1

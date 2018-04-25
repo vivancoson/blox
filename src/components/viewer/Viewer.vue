@@ -1,10 +1,10 @@
 <template>
   <div class="yaml-viewer">
-    <v-navigation-drawer hide-overlay stateless clipped justify-center height ="auto" right absolute v-model="state.viewer.drawer">
+    <v-navigation-drawer hide-overlay stateless clipped justify-center height ="auto" right fixed v-model="state.viewer.drawer">
         <code class="pa-1" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end absolute>
-      <v-btn @click.stop="state.viewer.drawer = !state.viewer.drawer" dark color="pink">view yaml</v-btn>
+      <v-btn @click.stop="state.viewer.drawer = !state.viewer.drawer" :disabled="yaml.length === 0" dark color="pink">view yaml</v-btn>
     </v-layout>
   </div>
 </template>
@@ -22,11 +22,17 @@ export default {
   computed: {
     yaml () {
       this.stateService.setViewerDirty(false)
-      return this.generatorService.generate(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(), this.state.viewer.viewerDirty)
+      return this.generatorService.generate(this.stateService.currentWorkflow,
+        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), this.state.viewer.viewerDirty)
+    }
+  },
+  methods: {
+    switchDrawer () {
+      this.stateService.setViewerDrawerOpen(this.stateService.currentViewerState.drawer)
     }
   },
   created () {
-    this.jsPlumbService.listenToConnectionChanges(() => {
+    this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
       this.stateService.setViewerDirty(true)
     })
   },
