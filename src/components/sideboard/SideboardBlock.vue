@@ -1,6 +1,6 @@
 <template>
-    <drag class="drag" :transfer-data="{def}">
-          <div v-bind:class="def.color" class="pa-2 ma-2 elevation-5 sideboard-block white--text">
+    <drag class="drag"  :transfer-data="dragData">
+          <div ref="drag" v-bind:class="def.color" class="pa-2 ma-2 elevation-5 sideboard-block white--text">
             <div>
               <h5 v-once class="block-title">{{def.name}}</h5>
             </div>
@@ -12,6 +12,17 @@
 
 export default {
   name: 'ZSideBlock',
+  data () {
+    const el = () => {
+      return this.$refs.drag
+    }
+    return {
+      dragData: {
+        def: this.def,
+        el
+      }
+    }
+  },
   props: ['def'],
   components: {}
 }

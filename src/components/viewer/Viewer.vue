@@ -31,11 +31,6 @@ export default {
       this.stateService.setViewerDrawerOpen(this.stateService.currentViewerState.drawer)
     }
   },
-  created () {
-    this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
-      this.stateService.setViewerDirty(true)
-    })
-  },
   components: {}
 }
 </script>
