@@ -1,19 +1,21 @@
 <template>
-  <v-app dark id="app" fluid>
-    <v-layout row wrap>
-      <v-toolbar color="blue" dense fixed app>
-        <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
-        <v-toolbar-title class="mr-5 align-center">
-          <span class="title">Editor</span>
-        </v-toolbar-title>
-      </v-toolbar>
-      <z-side-board></z-side-board>
-      <v-flex xs12>
-        <z-main-board></z-main-board>
-      </v-flex>
-      <z-modal-form></z-modal-form>
-    </v-layout>
-    <z-viewer absolute></z-viewer>
+  <v-app dark fluid>
+    <div id="app">
+      <v-layout row wrap>
+        <v-toolbar dense fixed app>
+          <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
+          <v-toolbar-title>
+            <span class="title">Editor</span>
+          </v-toolbar-title>
+        </v-toolbar>
+        <z-side-board></z-side-board>
+        <v-flex xs12>
+          <z-main-board></z-main-board>
+        </v-flex>
+        <z-modal-form></z-modal-form>
+      </v-layout>
+      <z-viewer></z-viewer>
+    </div>
   </v-app>
 </template>
 

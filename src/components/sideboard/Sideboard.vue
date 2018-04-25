@@ -1,14 +1,7 @@
 <template>
-  <v-navigation-drawer hide-overlay stateless v-model="navigator.drawer" app>
-    <v-layout row align-center style="max-width: 650px">
-      <v-text-field
-        placeholder="Search..."
-        single-line
-        append-icon="search"
-        color="white"
-        v-model="searchInput"
-        hide-details
-      ></v-text-field>
+  <v-navigation-drawer hide-overlay stateless width="140" v-model="navigator.drawer" app>
+    <v-layout row align-center>
+      <v-text-field placeholder="Search" single-line append-icon="search" color="white" v-model="searchInput" hide-details></v-text-field>
     </v-layout>
     <div class="sideboard">
       <z-side-block v-bind:key="def.name" v-for="def in definitions" v-bind:def="def"></z-side-block>

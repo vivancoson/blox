@@ -1,6 +1,6 @@
 <template>
   <div class="yaml-viewer">
-    <v-navigation-drawer hide-overlay stateless clipped justify-center height ="auto" right absolute v-model="state.viewer.drawer">
+    <v-navigation-drawer stateless right v-model="state.viewer.drawer">
         <code class="pa-1" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end absolute>
@@ -35,7 +35,14 @@ export default {
 </script>
 
 <style scoped>
+  .yaml-viewer{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
   .yaml-viewer code {
     display: block;
+    max-height: 500px;
+    overflow: auto;
   }
 </style>
