@@ -2,15 +2,15 @@ export default {
   blockTypes: {
     input: {
       value: 'input',
-      color: 'blue'
+      color: 'block-input'
     },
     middleware: {
       value: 'middleware',
-      color: 'orange'
+      color: 'block-middleware'
     },
     output: {
       value: 'output',
-      color: 'purple'
+      color: 'block-output'
     }
   },
   connectionEvents: {

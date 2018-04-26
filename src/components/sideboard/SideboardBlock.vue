@@ -34,4 +34,13 @@ export default {
     height: 100px;
     border-radius: 5%;
   }
+  .block-input{
+    background-color: #42928c;
+  }
+  .block-middleware{
+    background-color: #b54a48;
+  }
+  .block-output{
+    background-color: #80495e;
+  }
 </style>

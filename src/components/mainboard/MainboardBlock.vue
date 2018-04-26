@@ -1,23 +1,35 @@
 <template>
-  <div v-bind:style="{ left: block.positionX + 'px', top: block.positionY + 'px' }" v-bind:class="color" class="sideboard-block elevation-3 white--text text-xs-center">
-    <h5 v-once class="pb-2 mt-1">
-      {{block.clazz}}
-    </h5>
-    <div class="bloc-info">
-      <h5>
-        {{block.name}}
-      </h5>
-    </div>
-    <div class="mt-1 ep red accent-2"></div>
-    <div class="block-actions">
-      <v-btn v-on:click="removeBlock" small icon>
-        <v-icon small dark>remove</v-icon>
-      </v-btn>
-      <v-btn v-on:click="selectBlock" small icon>
-        <v-icon small dark>edit</v-icon>
-      </v-btn>
-    </div>
-  </div>
+  <v-layout v-bind:style="{ left: block.positionX + 'px', top: block.positionY + 'px' }" class="sideboard-block elevation-10">
+    <v-flex>
+      <v-card v-bind:class="color">
+        <v-card-title primary-title>
+          <div>{{block.name}}</div>
+          <span>{{block.clazz}}</span>
+        </v-card-title>
+
+        <div class="ep"></div>
+
+        <v-card-actions>
+          <v-btn icon @click.native="showConfig = !showConfig">
+            <v-icon>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn v-on:click="selectBlock" small icon>
+            <v-icon small dark>edit</v-icon>
+          </v-btn>
+          <v-btn v-on:click="removeBlock" small icon>
+            <v-icon small dark>clear</v-icon>
+          </v-btn>
+        </v-card-actions>
+
+        <v-slide-y-transition>
+          <v-card-text v-show="showConfig">
+            Config
+          </v-card-text>
+        </v-slide-y-transition>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -27,6 +39,9 @@ import constants from '../../constants/constants'
 export default {
   name: 'ZMainBlock',
   inject: ['stateService', 'workflowService', 'jsPlumbService'],
+  data: () => ({
+    showConfig: false
+  }),
   computed: {
     color () {
       return constants.blockTypes[this.block.type].color
@@ -58,14 +73,24 @@ export default {
 
   .sideboard-block {
     position: absolute;
-    width: 130px;
-    height: 120px;
-    border-radius: 5%;
+    color: #f4f1d0;
+    width: 180px;
+  }
+
+  .block-input{
+    background-color: #42928c;
+  }
+
+  .block-middleware{
+    background-color: #b54a48;
+  }
+  .block-output{
+    background-color: #80495e;
   }
 
   .ep {
-    height: 20px;
-    border-radius: 10%;
+    height: 25px;
+    background-color: #3f3f3f;
   }
 
 </style>

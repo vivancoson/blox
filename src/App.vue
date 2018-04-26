@@ -2,7 +2,7 @@
   <v-app dark fluid>
     <div id="app">
       <v-layout row wrap>
-        <v-toolbar dense fixed app>
+        <v-toolbar class="header-toolbar" dense fixed app>
           <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
           <v-toolbar-title>
             <span class="title">Editor</span>
@@ -45,6 +45,9 @@ export default {
 <style>
 #app {
   font-family: 'Roboto', sans-serif;
+}
+.header-toolbar{
+  opacity: 0.7;
 }
 .navigation-drawer {
   height: auto;
