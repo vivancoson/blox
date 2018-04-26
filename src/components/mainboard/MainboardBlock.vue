@@ -35,9 +35,8 @@ export default {
   methods: {
     removeBlock () {
       const currentWorkflow = this.stateService.currentWorkflow
-      this.jsPlumbService.removeConnections(this.block)
+      this.jsPlumbService.removeConnections(currentWorkflow, this.block)
       this.workflowService.removeBlockFromWorkflow(currentWorkflow, this.block)
-      this.stateService.setViewerInvalid(true)
     },
     selectBlock () {
       this.stateService.setCurrentBlock({})
@@ -47,7 +46,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.jsPlumbService.initiateBLock(this.block)
+      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block)
     })
   },
   props: ['block'],

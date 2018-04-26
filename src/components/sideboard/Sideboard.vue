@@ -25,7 +25,7 @@ export default {
   computed: {
     definitions () {
       return this.defs.filter(e => {
-        return e.name.includes(this.searchInput)
+        return e.name.toLowerCase().includes(this.searchInput.toLowerCase())
       })
     }
   },

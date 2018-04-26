@@ -15,6 +15,7 @@ import UUIDService from './services/uuid_service'
 import NameService from './services/name_service'
 import StateService from './services/state_service'
 import JsPlumbService from './services/jsplumb_service'
+import StorageService from './services/storage_service'
 
 Vue.config.productionTip = false
 Vue.use(AsyncComputed)
@@ -33,6 +34,7 @@ new Vue({
     uuidService: new UUIDService(),
     nameService: new NameService(),
     stateService: new StateService(),
-    jsPlumbService: new JsPlumbService()
+    jsPlumbService: new JsPlumbService(),
+    storageService: new StorageService()
   }
 })

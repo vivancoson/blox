@@ -1,16 +1,26 @@
+import _ from 'lodash'
+
 export default class WorkflowService {
-  workflows = new Map();
+  workflows = [];
+  index = {}
 
   addWorkflow (workflow) {
-    this.workflows.set(workflow.id, workflow)
+    if (!this.index[workflow.id]) {
+      this.workflows.push(workflow)
+      this.index[workflow.id] = workflow
+    }
   }
 
   removeWorkflow (worflow) {
-    return this.removeWorkflowById(worflow.id)
+    this.removeWorkflowById(worflow.id)
   }
 
   removeWorkflowById (id) {
-    return this.workflows.delete(id)
+    if (this.index[id]) {
+      const index = _.findIndex(this.workflows, (w) => w.id === id)
+      this.workflows.splice(index, 1)
+      delete this.index[id]
+    }
   }
 
   addBlockToWorkflow (workflow, block) {
@@ -36,10 +46,10 @@ export default class WorkflowService {
   }
 
   getWorkflow (id) {
-    return this.workflows.get(id)
+    return this.index[id]
   }
 
   get workflowNumber () {
-    return this.workflows.size
+    return this.workflows.length
   }
 }
