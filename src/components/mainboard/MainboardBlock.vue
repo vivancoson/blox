@@ -24,7 +24,9 @@
 
         <v-slide-y-transition>
           <v-card-text v-show="showConfig">
-            Config
+            <div v-for="(value, key) in block.fields" v-bind:key="key">
+              <span v-once>{{key}} : </span> <span>{{value}}</span>
+            </div>
           </v-card-text>
         </v-slide-y-transition>
       </v-card>

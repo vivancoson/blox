@@ -11,7 +11,8 @@ export default class GeneratorService {
   generate (worflow, connections) {
     const connectionsByTarget = _.groupBy(connections, 'targetId')
     const result = {}
-    worflow.blocks.forEach((value) => {
+    const blocks = worflow.blocks || []
+    blocks.forEach((value) => {
       const sources = _.chain(connectionsByTarget[value.id] || [])
         .map((connection) => worflow.getBlock(connection.sourceId).name)
         .uniq()

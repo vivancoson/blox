@@ -4,10 +4,16 @@ export default class WorkflowService {
   workflows = [];
   index = {}
 
-  addWorkflow (workflow) {
+  addWorkflow ({workflow, links}) {
     if (!this.index[workflow.id]) {
-      this.workflows.push(workflow)
-      this.index[workflow.id] = workflow
+      this.workflows.push({
+        workflow,
+        links
+      })
+      this.index[workflow.id] = {
+        workflow,
+        links
+      }
     }
   }
 
@@ -17,7 +23,7 @@ export default class WorkflowService {
 
   removeWorkflowById (id) {
     if (this.index[id]) {
-      const index = _.findIndex(this.workflows, (w) => w.id === id)
+      const index = _.findIndex(this.workflows, (w) => w.workflow.id === id)
       this.workflows.splice(index, 1)
       delete this.index[id]
     }
@@ -46,7 +52,7 @@ export default class WorkflowService {
   }
 
   getWorkflow (id) {
-    return this.index[id]
+    return this.index[id].workflow
   }
 
   get workflowNumber () {

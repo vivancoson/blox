@@ -17,5 +17,9 @@ export default {
     attached: 'connection',
     detached: 'connectionDetached',
     moved: 'connectionMoved'
+  },
+  storageKeys: {
+    workflow: 'worfklow',
+    current: 'currentWorkflow'
   }
 }

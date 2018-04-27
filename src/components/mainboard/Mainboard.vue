@@ -11,10 +11,24 @@ import _ from 'lodash'
 import ZMainBlock from './MainboardBlock'
 import Workflow from '../../models/workflow'
 import Block from '../../models/block'
+import constants from '../../constants/constants'
+
+function createWorkflow (id, blocks, links) {
+  const workflow = new Workflow(id)
+  blocks.map(createBlock).forEach(b => workflow.addBlock(b))
+  return {
+    workflow,
+    links
+  }
+}
+
+function createBlock ({id, name, type, clazz, fields}) {
+  return new Block(id, name, type, clazz, fields)
+}
 
 export default {
   name: 'ZMainBoard',
-  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService'],
+  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService', 'storageService'],
   components: {ZMainBlock},
   data () {
     return {
@@ -28,21 +42,41 @@ export default {
         const el = data.el()
         const block = new Block(this.uuidService.uuid(), this.nameService.name, def.type, def.name, _.cloneDeep(def.config))
         block.setPosition(event.offsetX - el.offsetWidth / 2, event.offsetY - el.offsetHeight / 2)
-        this.workflowService.addBlockToWorkflowById(0, block)
+        this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block)
         this.stateService.setViewerDirty(true)
+        this.storageService.set(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), constants.storageKeys.workflow)
       }
     }
   },
   created () {
-    const workflow = new Workflow(0)
-    this.workflowService.addWorkflow(workflow)
-    this.blocks = workflow.blocks
-    this.stateService.setCurrentWorkflow(workflow)
+    this.storageService.keys().then(keys => {
+      return keys.filter(e => e.startsWith(constants.storageKeys.workflow))
+    }).then(keys => {
+      if (keys.length > 0) {
+        this.storageService.iterate(({workflow, links}) => {
+          this.workflowService.addWorkflow(createWorkflow(workflow.id, workflow.blocks, links))
+        }, constants.storageKeys.workflow).then(() => {
+          this.storageService.getCurrent(constants.storageKeys.current).then(element => {
+            this.stateService.setCurrentWorkflow(this.workflowService.getWorkflow(element.workflow.id))
+            this.blocks = this.stateService.currentWorkflow.blocks
+          })
+        })
+      } else {
+        const workflow = createWorkflow(this.uuidService.uuid(), [], [])
+        this.workflowService.addWorkflow(workflow)
+        this.blocks = workflow.workflow.blocks
+        this.stateService.setCurrentWorkflow(workflow.workflow)
+        this.storageService.set(workflow.workflow, [], constants.storageKeys.workflow)
+        this.storageService.setCurrent(constants.storageKeys.current, workflow.workflow, [])
+      }
+    })
+
     this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
       this.stateService.setViewerDirty(true)
     })
   }
 }
+
 </script>
 
 <style scoped>
