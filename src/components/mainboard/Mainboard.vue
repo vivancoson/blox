@@ -48,6 +48,7 @@ export default {
       }
     }
   },
+  // TODO: Refactor this code or completely change it
   created () {
     this.storageService.keys().then(keys => {
       return keys.filter(e => e.startsWith(constants.storageKeys.workflow))
@@ -59,20 +60,31 @@ export default {
           this.storageService.getCurrent(constants.storageKeys.current).then(element => {
             this.stateService.setCurrentWorkflow(this.workflowService.getWorkflow(element.workflow.id))
             this.blocks = this.stateService.currentWorkflow.blocks
+            this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
+              this.stateService.setViewerDirty(true)
+              this.storageService.set(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), constants.storageKeys.workflow)
+            })
+          }).then(() => {
+            this.$nextTick(() => {
+              const currentWorkflow = this.stateService.currentWorkflow
+              const links = this.workflowService.getWorkflowAndLinks(currentWorkflow.id).links
+              links.forEach(c => {
+                this.jsPlumbService.connect(currentWorkflow, c.sourceId, c.targetId)
+              })
+            })
           })
         })
       } else {
-        const workflow = createWorkflow(this.uuidService.uuid(), [], [])
-        this.workflowService.addWorkflow(workflow)
-        this.blocks = workflow.workflow.blocks
-        this.stateService.setCurrentWorkflow(workflow.workflow)
-        this.storageService.set(workflow.workflow, [], constants.storageKeys.workflow)
-        this.storageService.setCurrent(constants.storageKeys.current, workflow.workflow, [])
+        const workflowAndLinks = createWorkflow(this.uuidService.uuid(), [], [])
+        this.workflowService.addWorkflow(workflowAndLinks)
+        this.blocks = workflowAndLinks.workflow.blocks
+        this.stateService.setCurrentWorkflow(workflowAndLinks.workflow)
+        this.storageService.set(workflowAndLinks.workflow, [], constants.storageKeys.workflow)
+        this.storageService.setCurrent(constants.storageKeys.current, workflowAndLinks.workflow, [])
+        this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
+          this.stateService.setViewerDirty(true)
+        })
       }
-    })
-
-    this.jsPlumbService.listenToConnectionChanges(this.stateService.currentWorkflow, () => {
-      this.stateService.setViewerDirty(true)
     })
   }
 }

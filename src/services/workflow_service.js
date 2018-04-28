@@ -52,7 +52,10 @@ export default class WorkflowService {
   }
 
   getWorkflow (id) {
-    return this.index[id].workflow
+    return this.getWorkflowAndLinks(id).workflow
+  }
+  getWorkflowAndLinks (id) {
+    return this.index[id]
   }
 
   get workflowNumber () {

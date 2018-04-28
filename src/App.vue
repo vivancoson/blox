@@ -30,7 +30,7 @@ export default {
   inject: ['stateService'],
   methods: {
     switchDrawer () {
-      this.stateService.setDrawerOpen(!this.stateService.state.navigator.drawer)
+      this.stateService.setDrawerOpen(!this.stateService.currentNavigatorState.drawer)
     }
   },
   components: {

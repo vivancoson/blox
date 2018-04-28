@@ -4,7 +4,10 @@
         <code class="pa-1" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end absolute>
-      <v-btn @click.stop="state.viewer.drawer = !state.viewer.drawer" :disabled="yaml.length === 0" dark color="pink">view yaml</v-btn>
+      <v-btn @click.stop="switchDrawer" :disabled="yaml.length === 0" dark color="pink">
+        <span v-if="!state.viewer.drawer">view yaml</span>
+        <span v-else>hide yaml</span>
+      </v-btn>
     </v-layout>
   </div>
 </template>
@@ -28,7 +31,8 @@ export default {
   },
   methods: {
     switchDrawer () {
-      this.stateService.setViewerDrawerOpen(this.stateService.currentViewerState.drawer)
+      const nextState = !this.stateService.currentViewerState.drawer
+      this.stateService.setViewerDrawerOpen(nextState)
     }
   },
   components: {}

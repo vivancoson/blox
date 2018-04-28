@@ -50,6 +50,13 @@ export default class JsPlumbService {
   removeConnections (workflow, block) {
     this.getInstance(workflow).instance.remove(block.id)
   }
+
+  connect (worfklow, sourceId, targetId) {
+    this.getInstance(worfklow).instance.connect({
+      source: sourceId,
+      target: targetId
+    })
+  }
   initiateBlock (workflow, block) {
     const instance = this.getInstance(workflow).instance
     instance.draggable(block.id, {

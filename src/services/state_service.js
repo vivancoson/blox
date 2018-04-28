@@ -51,7 +51,7 @@ export default class StateService {
   }
 
   get currentViewerState () {
-    return this.currentViewerState.viewer
+    return this.state.viewer
   }
 
   get currentNavigatorState () {
