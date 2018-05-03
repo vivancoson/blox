@@ -5,8 +5,7 @@ export default {
       'a0': 0,
       'b0': 0,
       'c0': 0
-    },
-    sources: []
+    }
   },
   'block-1': {
     class: 'test1',
@@ -14,8 +13,7 @@ export default {
       'a1': 1,
       'b1': 1,
       'c1': 1
-    },
-    sources: []
+    }
   },
   'block-2': {
     class: 'test2',
@@ -41,7 +39,6 @@ export default {
       'a4': 4,
       'b4': 4,
       'c4': 4
-    },
-    sources: []
+    }
   }
 }

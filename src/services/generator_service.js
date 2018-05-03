@@ -38,4 +38,8 @@ export default class GeneratorService {
       return ''
     }
   }
+
+  loadFromYaml (yaml) {
+
+  }
 }

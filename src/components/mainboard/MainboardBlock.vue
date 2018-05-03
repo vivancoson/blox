@@ -1,5 +1,5 @@
 <template>
-  <v-layout v-bind:style="{ left: block.positionX + 'px', top: block.positionY + 'px' }" class="sideboard-block elevation-10">
+  <v-layout v-bind:style="blockPosition" class="mainboard-block sideboard-block elevation-10">
     <v-flex>
       <v-card v-bind:class="color">
         <v-card-title primary-title>
@@ -47,6 +47,12 @@ export default {
   computed: {
     color () {
       return constants.blockTypes[this.block.type].color
+    },
+    blockPosition () {
+      return {
+        left: this.block.positionX,
+        top: this.block.positionY
+      }
     }
   },
   methods: {

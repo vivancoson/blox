@@ -28,7 +28,7 @@ function createBlock ({id, name, type, clazz, fields}) {
 
 export default {
   name: 'ZMainBoard',
-  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService', 'storageService'],
+  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService', 'storageService', 'blockService'],
   components: {ZMainBlock},
   data () {
     return {
@@ -71,6 +71,7 @@ export default {
               links.forEach(c => {
                 this.jsPlumbService.connect(currentWorkflow, c.sourceId, c.targetId)
               })
+              this.blockService.calculatePositions(currentWorkflow.blocks)
             })
           })
         })
