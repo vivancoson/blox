@@ -53,8 +53,10 @@ export default {
   height: auto;
   padding: 0px;
 }
-
 .jtk-endpoint{
   z-index: 1;
+}
+.jtk-drag{
+  z-index: 2;
 }
 </style>

@@ -1,15 +1,14 @@
 <template>
   <div class="yaml-viewer">
-    <v-navigation-drawer stateless right v-model="state.viewer.drawer">
+    <v-navigation-drawer stateless v-model="state.viewer.drawer">
       <v-btn v-on:click="copyToClipboard" light icon absolute right>
         <v-icon>content_copy</v-icon>
       </v-btn>
       <code id="yaml-text" v-html="yaml"></code>
     </v-navigation-drawer>
-    <v-layout justify-end absolute>
-      <v-btn @click.stop="switchDrawer" :disabled="yaml.length === 0" dark color="pink">
-        <span v-if="!state.viewer.drawer">view yaml</span>
-        <span v-else>hide yaml</span>
+    <v-layout justify-end>
+      <v-btn id="yaml-button" @click.stop="switchDrawer" :disabled="yaml.length === 0" dark color="pink">
+        <span>{{ state.viewer.drawer ? 'hide yaml' : 'view yaml' }}</span>
       </v-btn>
     </v-layout>
   </div>
@@ -47,14 +46,19 @@ export default {
 </script>
 
 <style scoped>
-  .yaml-viewer{
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-  .yaml-viewer code {
-    display: block;
-    max-height: 500px;
-    overflow: auto;
-  }
+.yaml-viewer{
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  left: 100%;
+}
+.yaml-viewer code {
+  display: block;
+  max-height: 500px;
+  overflow: auto;
+}
+#yaml-button{
+  position: relative;
+  right: 100%;
+}
 </style>
