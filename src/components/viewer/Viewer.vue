@@ -1,7 +1,10 @@
 <template>
   <div class="yaml-viewer">
     <v-navigation-drawer stateless right v-model="state.viewer.drawer">
-        <code class="pa-1" v-html="yaml"></code>
+      <v-btn v-on:click="copyToClipboard" light icon absolute right>
+        <v-icon>content_copy</v-icon>
+      </v-btn>
+      <code id="yaml-text" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end absolute>
       <v-btn @click.stop="switchDrawer" :disabled="yaml.length === 0" dark color="pink">
@@ -33,6 +36,10 @@ export default {
     switchDrawer () {
       const nextState = !this.stateService.currentViewerState.drawer
       this.stateService.setViewerDrawerOpen(nextState)
+    },
+    copyToClipboard () {
+      window.getSelection().selectAllChildren(document.getElementById('yaml-text'))
+      document.execCommand('copy')
     }
   },
   components: {}
