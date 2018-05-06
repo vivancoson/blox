@@ -79,27 +79,25 @@ export default {
 </script>
 
 <style scoped>
+.sideboard-block{
+  position: absolute;
+  color: #f4f1d0;
+  width: 180px;
+}
 
-  .sideboard-block {
-    position: absolute;
-    color: #f4f1d0;
-    width: 180px;
-  }
+.block-input{
+  background-color: #42928c;
+}
 
-  .block-input{
-    background-color: #42928c;
-  }
+.block-middleware{
+  background-color: #b54a48;
+}
+.block-output{
+  background-color: #80495e;
+}
 
-  .block-middleware{
-    background-color: #b54a48;
-  }
-  .block-output{
-    background-color: #80495e;
-  }
-
-  .ep {
-    height: 25px;
-    background-color: #3f3f3f;
-  }
-
+.ep{
+  height: 25px;
+  background-color: #3f3f3f;
+}
 </style>

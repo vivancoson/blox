@@ -10,15 +10,15 @@ export default class JsPlumbService {
       Container: 'container',
       Connector: 'StateMachine',
       Anchor: ['Perimeter', { shape: 'Square' }],
-      Endpoint: ['Dot', { radius: 10 }],
+      EndpointStyle: { fill: '#303030', stroke: '#f4f1d0' },
+      PaintStyle: { strokeWidth: 5, stroke: '#f4f1d0' },
       ConnectionOverlays: [
         [
           'Arrow',
           {
             location: 1,
-            width: 10,
-            length: 7,
-            foldbackPoint: 0.62
+            width: 23,
+            length: 23
           }
         ]
       ]
@@ -66,14 +66,6 @@ export default class JsPlumbService {
     if (block.type !== constants.blockTypes.output.value) {
       instance.makeSource(block.id, {
         filter: '.ep',
-        anchor: 'Continuous',
-        connectorStyle: {
-          stroke: '#5c96bc', strokeWidth: 2, outlineStroke: 'transparent', outlineWidth: 4
-        },
-        connectionType: 'basic',
-        extract: {
-          action: 'the-action'
-        },
         maxConnections: -1,
         allowLoopback: false
       })
@@ -81,7 +73,6 @@ export default class JsPlumbService {
 
     if (block.type !== constants.blockTypes.input.value) {
       instance.makeTarget(block.id, {
-        anchor: 'Continuous',
         allowLoopback: false,
         maxConnections: -1
       })

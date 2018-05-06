@@ -53,4 +53,8 @@ export default {
   height: auto;
   padding: 0px;
 }
+
+.jtk-endpoint{
+  z-index: 1;
+}
 </style>
