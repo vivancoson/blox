@@ -3,7 +3,6 @@ import _ from 'lodash'
 import constants from '../constants/constants'
 export default class BlockService {
   calculatePositions (blocks) {
-    const initOffsetX = 100
     const initOffsetY = 100
     let startOffsetX = 100
     let startOffsetY = 100

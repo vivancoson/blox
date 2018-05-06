@@ -2,24 +2,33 @@
   <v-layout v-bind:style="blockPosition" class="mainboard-block sideboard-block elevation-10">
     <v-flex>
       <v-card v-bind:class="color">
-        <v-card-title primary-title>
-          <div>{{block.name}}</div>
-          <span>{{block.clazz}}</span>
+        <v-card-title>
+          <div class="body-2" style="width:100%">{{block.name}}</div><br>
+          <span class="body-1">{{block.clazz}}</span>
         </v-card-title>
 
         <div class="ep"></div>
 
         <v-card-actions>
-          <v-btn icon @click.native="showConfig = !showConfig">
-            <v-icon>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <v-btn icon @click.native="showConfig = !showConfig" slot="activator">
+              <v-icon>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+            </v-btn>
+            <span>{{ showConfig ? 'Réduire' : 'Détails' }}</span>
+          </v-tooltip>
           <v-spacer></v-spacer>
-          <v-btn v-on:click="selectBlock" small icon>
-            <v-icon small dark>edit</v-icon>
-          </v-btn>
-          <v-btn v-on:click="removeBlock" small icon>
-            <v-icon small dark>clear</v-icon>
-          </v-btn>
+          <v-tooltip bottom>
+            <v-btn v-on:click="selectBlock" small icon slot="activator">
+              <v-icon small dark>edit</v-icon>
+            </v-btn>
+            <span>Modifier</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn v-on:click="removeBlock" small icon slot="activator">
+              <v-icon small dark>clear</v-icon>
+            </v-btn>
+            <span>Supprimer</span>
+          </v-tooltip>
         </v-card-actions>
 
         <v-slide-y-transition>
