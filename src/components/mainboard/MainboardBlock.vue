@@ -12,20 +12,21 @@
         <v-card-actions>
           <v-tooltip bottom>
             <v-btn icon @click.native="showConfig = !showConfig" slot="activator">
-              <v-icon>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+              <v-icon large>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
             </v-btn>
             <span>{{ showConfig ? 'Réduire' : 'Détails' }}</span>
           </v-tooltip>
           <v-spacer></v-spacer>
           <v-tooltip bottom>
-            <v-btn v-on:click="selectBlock" small icon slot="activator">
-              <v-icon small dark>edit</v-icon>
+            <v-btn v-on:click="selectBlock" icon slot="activator">
+              <v-icon>edit</v-icon>
             </v-btn>
             <span>Modifier</span>
           </v-tooltip>
+          <v-spacer></v-spacer>
           <v-tooltip bottom>
-            <v-btn v-on:click="removeBlock" small icon slot="activator">
-              <v-icon small dark>clear</v-icon>
+            <v-btn v-on:click="removeBlock" icon slot="activator">
+              <v-icon medium>clear</v-icon>
             </v-btn>
             <span>Supprimer</span>
           </v-tooltip>
@@ -93,7 +94,6 @@ export default {
   color: #f4f1d0;
   width: 180px;
 }
-
 .block-input{
   background-color: #42928c;
 }

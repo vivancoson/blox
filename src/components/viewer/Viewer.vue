@@ -7,8 +7,8 @@
       <code id="yaml-text" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end>
-      <v-btn id="yaml-button" @click.stop="switchDrawer" :disabled="yaml.length === 0" dark color="pink">
-        <span>{{ state.viewer.drawer ? 'hide yaml' : 'view yaml' }}</span>
+      <v-btn id="yaml-button" @click.stop="switchDrawer" :disabled="yaml.length === 0">
+        <span>{{ state.viewer.drawer ? 'view yaml' : 'hide yaml' }}</span>
       </v-btn>
     </v-layout>
   </div>

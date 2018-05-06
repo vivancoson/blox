@@ -43,6 +43,9 @@ export default {
 </script>
 
 <style>
+*, .theme--dark .btn{
+  color: #f4f1d0;
+}
 #app {
   font-family: 'Roboto', sans-serif;
 }
