@@ -97,16 +97,21 @@ export default {
 .block-input{
   background-color: #42928c;
 }
-
 .block-middleware{
   background-color: #b54a48;
 }
 .block-output{
   background-color: #80495e;
 }
-
 .ep{
-  height: 25px;
-  background-color: #3f3f3f;
+  height: 30px;
+  border: 1px solid #f4f1d0;
+  margin: -8px 14px 0px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+}
+.ep:active {
+  border: double;
+  background-color: #30303057;
 }
 </style>
