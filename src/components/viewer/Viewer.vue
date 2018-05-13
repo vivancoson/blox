@@ -7,7 +7,7 @@
       <code id="yaml-text" v-html="yaml"></code>
     </v-navigation-drawer>
     <v-layout justify-end>
-      <v-btn id="yaml-button" @click.stop="switchDrawer" :disabled="yaml.length === 0">
+      <v-btn id="yaml-button" v-on:click="switchDrawer" :disabled="yaml.length === 0">
         <span>{{ state.viewer.drawer ? 'view yaml' : 'hide yaml' }}</span>
       </v-btn>
     </v-layout>
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     switchDrawer () {
-      const nextState = !this.stateService.currentViewerState.drawer
+      let nextState = !this.stateService.currentViewerState.drawer
       this.stateService.setViewerDrawerOpen(nextState)
     },
     copyToClipboard () {

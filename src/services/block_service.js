@@ -16,7 +16,6 @@ export default class BlockService {
       blocks.forEach(block => {
         block.setPosition(startOffsetX, startOffsetY)
         startOffsetY += height
-        console.log(block)
       })
       startOffsetX += width
       startOffsetY = initOffsetY

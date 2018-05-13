@@ -11,8 +11,8 @@
 
         <v-card-actions>
           <v-tooltip bottom>
-            <v-btn icon @click.native="showConfig = !showConfig" slot="activator">
-              <v-icon large>{{ showConfig ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
+            <v-btn icon v-on:click="showConfig = !showConfig" slot="activator">
+              <v-icon large>{{ showConfig ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
             </v-btn>
             <span>{{ showConfig ? 'Réduire' : 'Détails' }}</span>
           </v-tooltip>
@@ -52,17 +52,15 @@ export default {
   name: 'ZMainBlock',
   inject: ['stateService', 'workflowService', 'jsPlumbService', 'storageService'],
   data: () => ({
-    showConfig: false
+    showConfig: false,
+    blockPosition: {
+      left: '0px',
+      top: '0px'
+    }
   }),
   computed: {
     color () {
       return constants.blockTypes[this.block.type].color
-    },
-    blockPosition () {
-      return {
-        left: this.block.positionX,
-        top: this.block.positionY
-      }
     }
   },
   methods: {
@@ -76,11 +74,15 @@ export default {
       this.stateService.setCurrentBlock({})
       this.stateService.setCurrentBlock(this.block)
       this.stateService.setFormState(true)
+    },
+    setBlockPosition (left, top) {
+      this.blockPosition.left = left + 'px'
+      this.blockPosition.top = top + 'px'
     }
   },
   mounted () {
     this.$nextTick(() => {
-      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block)
+      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block).then(this.setBlockPosition(this.block.positionX, this.block.positionY))
     })
   },
   props: ['block'],

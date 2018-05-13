@@ -9,7 +9,7 @@ export default class StateService {
     },
     viewer: {
       viewerDirty: false,
-      drawer: false
+      drawer: true
     },
     navigator: {
       drawer: true

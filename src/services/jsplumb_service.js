@@ -57,7 +57,8 @@ export default class JsPlumbService {
       target: targetId
     })
   }
-  initiateBlock (workflow, block) {
+
+  async initiateBlock (workflow, block) {
     const instance = this.getInstance(workflow).instance
     instance.draggable(block.id, {
       containment: 'true'

@@ -65,13 +65,11 @@ export default {
               this.storageService.set(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), constants.storageKeys.workflow)
             })
           }).then(() => {
-            this.$nextTick(() => {
-              const currentWorkflow = this.stateService.currentWorkflow
-              const links = this.workflowService.getWorkflowAndLinks(currentWorkflow.id).links
-              links.forEach(c => {
-                this.jsPlumbService.connect(currentWorkflow, c.sourceId, c.targetId)
-              })
-              this.blockService.calculatePositions(currentWorkflow.blocks)
+            const currentWorkflow = this.stateService.currentWorkflow
+            const links = this.workflowService.getWorkflowAndLinks(currentWorkflow.id).links
+            this.blockService.calculatePositions(currentWorkflow.blocks)
+            links.forEach(c => {
+              this.jsPlumbService.connect(currentWorkflow, c.sourceId, c.targetId)
             })
           })
         })
