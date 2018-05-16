@@ -3,7 +3,9 @@
     <v-layout row align-center>
       <v-text-field placeholder="Search" single-line append-icon="search" color="white" v-model="searchInput" hide-details></v-text-field>
     </v-layout>
+
     <div class="sideboard">
+      <z-custom-block></z-custom-block>
       <z-side-block v-bind:key="def.name" v-for="def in definitions" v-bind:def="def"></z-side-block>
     </div>
   </v-navigation-drawer>
@@ -12,6 +14,7 @@
 <script>
 
 import ZSideBlock from './SideboardBlock'
+import ZCustomBlock from './CustomBlock'
 
 export default {
   name: 'ZSideboard',
@@ -37,7 +40,7 @@ export default {
       default: []
     }
   },
-  components: {ZSideBlock}
+  components: {ZSideBlock, ZCustomBlock}
 }
 </script>
 

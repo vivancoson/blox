@@ -15,7 +15,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'ZViewer',
   inject: ['stateService', 'generatorService', 'jsPlumbService'],
@@ -40,8 +39,7 @@ export default {
       window.getSelection().selectAllChildren(document.getElementById('yaml-text'))
       document.execCommand('copy')
     }
-  },
-  components: {}
+  }
 }
 </script>
 
