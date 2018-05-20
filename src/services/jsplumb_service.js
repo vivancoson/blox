@@ -1,10 +1,9 @@
-import {jsPlumb} from 'jsplumb'
+import { jsPlumb } from 'jsplumb'
 import _ from 'lodash'
 import constants from '../constants/constants'
 
 export default class JsPlumbService {
-  instances = {
-  }
+  instances = {}
   createInstance () {
     return jsPlumb.getInstance({
       Container: 'container',
@@ -38,21 +37,27 @@ export default class JsPlumbService {
   getAllConnections (workflow) {
     return this.getInstance(workflow).instance.getAllConnections()
   }
+
+  repaintEverything (workflow) {
+    this.getInstance(workflow).instance.repaintEverything()
+  }
+
   listenToConnectionChanges (workflow, handler) {
     const instance = this.getInstance(workflow)
     if (!instance.hasListener) {
-      _.forOwn(constants.connectionEvents, (value) => {
+      _.forOwn(constants.connectionEvents, value => {
         instance.instance.bind(value, handler)
       })
       instance.hasListener = true
     }
   }
+
   removeConnections (workflow, block) {
     this.getInstance(workflow).instance.remove(block.id)
   }
 
-  connect (worfklow, sourceId, targetId) {
-    this.getInstance(worfklow).instance.connect({
+  connect (workflow, sourceId, targetId) {
+    this.getInstance(workflow).instance.connect({
       source: sourceId,
       target: targetId
     })

@@ -1,20 +1,20 @@
 import _ from 'lodash'
 import Prism from 'prismjs'
 import loadLanguages from 'prismjs/components/index'
-import {safeDump} from 'js-yaml'
+import {safeLoad, safeDump} from 'js-yaml'
 
 export default class GeneratorService {
   constructor () {
     loadLanguages(['yaml'])
   }
 
-  generate (worflow, connections) {
+  generate (workflow, connections) {
     const connectionsByTarget = _.groupBy(connections, 'targetId')
     const result = {}
-    const blocks = worflow.blocks || []
+    const blocks = workflow.blocks || []
     blocks.forEach((value) => {
       const sources = _.chain(connectionsByTarget[value.id] || [])
-        .map((connection) => worflow.getBlock(connection.sourceId).name)
+        .map((connection) => workflow.getBlock(connection.sourceId).name)
         .uniq()
         .sort()
         .value()
@@ -40,6 +40,6 @@ export default class GeneratorService {
   }
 
   loadFromYaml (yaml) {
-
+    return safeLoad(yaml)
   }
 }
