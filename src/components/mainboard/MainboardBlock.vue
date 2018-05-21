@@ -80,9 +80,12 @@ export default {
       this.blockPosition.top = top + 'px'
     }
   },
+  beforeMount () {
+    this.setBlockPosition(this.block.positionX, this.block.positionY)
+  },
   mounted () {
     this.$nextTick(() => {
-      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block).then(this.setBlockPosition(this.block.positionX, this.block.positionY))
+      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block)
     })
   },
   props: ['block'],

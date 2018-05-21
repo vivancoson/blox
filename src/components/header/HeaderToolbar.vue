@@ -52,17 +52,16 @@ export default {
           this.workflowService.addBlockToWorkflow(currentWorkflow, block)
           this.stateService.setViewerDirty(true)
           this.storageService.set(currentWorkflow, this.jsPlumbService.getAllConnections(currentWorkflow), constants.storageKeys.workflow)
-        }).then(
-          this.$nextTick(() => {
-            _.forIn(blockMap, (value, key) => {
-              if (value.sources) {
-                value.sources.forEach((e) => {
-                  this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id)
-                })
-              }
-            })
+        })
+        this.$nextTick(() => {
+          _.forIn(blockMap, (value, key) => {
+            if (value.sources) {
+              value.sources.forEach(e => {
+                this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id)
+              })
+            }
           })
-        )
+        })
       }
       reader.readAsText(file)
     }
