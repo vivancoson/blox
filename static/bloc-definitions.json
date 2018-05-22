@@ -1,22 +1,157 @@
 {
-  "SecuredKafkaInput": {
-    "config": {
-      "topic": "",
-      "broker": "",
-      "reset": ""
+  "input": {
+    "HBaseInput": {
+      "class": "classInput1",
+      "config": {
+        "table": ""
+      }
     },
-    "type": "input"
+    "HiveInput": {
+      "class": "classInput2",
+      "config": {
+        "sql": ""
+      }
+    },
+    "KafkaInput": {
+      "class": "classInput3",
+      "config": {
+        "topic": "",
+        "broker": "",
+        "reset": ""
+      }
+    },
+    "SecuredKafkaInput": {
+      "class": "classInput4",
+      "config": {
+        "topic": "",
+        "broker": "",
+        "reset": ""
+      }
+    },
+    "CsvInput": {
+      "class": "classInput5",
+      "config": {
+        "file": ""
+      }
+    },
+    "XmlInput": {
+      "class": "classInput6",
+      "config": {
+        "XmlInputFolder": ""
+      }
+    }
   },
-  "FilterMiddleware": {
-    "config": {
-      "filter": ""
+  "middleware": {
+    "BulkGet": {
+      "class": "classMiddleware1",
+      "config": {
+        "table": "",
+        "field": ""
+      }
     },
-    "type": "middleware"
+    "HBaseGet": {
+      "class": "classMiddleware2",
+      "config": {
+        "table": "",
+        "field": "",
+        "target": ""
+      }
+    },
+    "MapperTransformer": {
+      "class": "classMiddleware3",
+      "config": {
+        "mapper": ""
+      }
+    },
+    "FlattenTransformer": {
+      "class": "classMiddleware4",
+      "config": {
+        "flat": ""
+      }
+    },
+    "FilterXPath": {
+      "class": "classMiddleware5",
+      "config": {
+        "filter": ""
+      }
+    },
+    "HBaseFlattenLink": {
+      "class": "classMiddleware6",
+      "config": {
+        "source": "",
+        "target": "",
+        "prefix": ""
+      }
+    },
+    "HBaseScanRange": {
+      "class": "classMiddleware7",
+      "config": {
+        "table": "",
+        "range_in": "",
+        "range_out": "",
+        "target": ""
+      }
+    },
+    "NullIfEmpty": {
+      "class": "classMiddleware8"
+    }
   },
-  "HbaseOutput": {
-    "config": {
-      "id": ""
+  "output": {
+    "HBaseOutput": {
+      "class": "classOutput1",
+      "config": {
+        "table": ""
+      }
     },
-    "type": "output"
+    "HBaseDeleteOutput": {
+      "class": "classOutput2",
+      "config": {
+        "table": ""
+      }
+    },
+    "ElasticsearchOutput": {
+      "class": "classOutput3",
+      "config": {
+        "index": "",
+        "hostname": "",
+        "port": ""
+      }
+    },
+    "SecuredElasticsearchOutput": {
+      "class": "classOutput4",
+      "config": {
+        "index": "",
+        "hostname": "",
+        "port": "",
+        "user": "",
+        "password": "",
+        "salt_file": ""
+      }
+    },
+    "KafkaOutput": {
+      "class": "classOutput5",
+      "config": {
+        "topic": "",
+        "broker": ""
+      }
+    },
+    "SecuredKafkaOuput": {
+      "class": "classOutput6",
+      "config": {
+        "topic": "",
+        "broker": ""
+      }
+    },
+    "OrientDBOutput": {
+      "class": "classOutput7",
+      "config": {
+        "uri": "",
+        "user": "",
+        "password": ""
+      }
+    },
+    "LogOutput": {
+      "class": "classOutput8"
+    }
   }
 }

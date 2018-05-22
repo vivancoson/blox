@@ -18,7 +18,11 @@ import StorageService from './services/storage_service'
 
 Vue.config.productionTip = false
 Vue.use(VueDragDrop)
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#f4f1d0'
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

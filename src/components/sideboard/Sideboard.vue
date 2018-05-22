@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer hide-overlay stateless width="200" v-model="navigator.drawer" app>
     <v-layout row align-center>
-      <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 pt-1" hide-details></v-text-field>
+      <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 py-1" hide-details></v-text-field>
     </v-layout>
 
     <div class="sideboard">
@@ -46,6 +46,6 @@ export default {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d0ff00;
+  background: #f4f1d0;
 }
 </style>
