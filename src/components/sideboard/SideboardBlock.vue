@@ -1,16 +1,17 @@
 <template>
-  <drag class="drag"  :transfer-data="dragData">
-    <div ref="drag" v-bind:class="def.color" class="pa-2 ma-2 elevation-5 sideboard-block white--text">
-      <div>
-        <h5 v-once class="block-title">{{def.name}}</h5>
-      </div>
-    </div>
+  <drag class="drag" :transfer-data="dragData">
+    <v-tooltip right>
+      <v-card ref="drag" v-bind:class="def.color" class="pa-2 ma-2 elevation-9" slot="activator">
+        <div class="caption">{{def.name}}</div>
+      </v-card>
+      <span>{{def.clazz}}</span>
+    </v-tooltip>
   </drag>
 </template>
 
 <script>
 export default {
-  name: 'ZSideBlock',
+  name: 'ZSideboardBlock',
   data () {
     const el = () => {
       return this.$refs.drag
@@ -25,12 +26,8 @@ export default {
   props: ['def']
 }
 </script>
+
 <style scoped>
-.sideboard-block {
-  width: 120px;
-  height: 100px;
-  border-radius: 5%;
-}
 .block-input{
   background-color: #42928c;
 }

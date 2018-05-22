@@ -1,19 +1,19 @@
 <template>
-  <v-navigation-drawer hide-overlay stateless width="140" v-model="navigator.drawer" app>
+  <v-navigation-drawer hide-overlay stateless width="200" v-model="navigator.drawer" app>
     <v-layout row align-center>
-      <v-text-field placeholder="Search" single-line append-icon="search" color="white" v-model="searchInput" hide-details></v-text-field>
+      <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 pt-1" hide-details></v-text-field>
     </v-layout>
 
     <div class="sideboard">
       <z-custom-block></z-custom-block>
-      <z-side-block v-bind:key="def.name" v-for="def in definitions" v-bind:def="def"></z-side-block>
+      <z-sideboard-block v-bind:key="block.name" v-for="block in filteredBlockList" v-bind:def="block"></z-sideboard-block>
     </div>
   </v-navigation-drawer>
 </template>
 
 <script>
 
-import ZSideBlock from './SideboardBlock'
+import ZSideboardBlock from './SideboardBlock'
 import ZCustomBlock from './CustomBlock'
 
 export default {
@@ -21,28 +21,31 @@ export default {
   inject: ['blockService', 'stateService'],
   data () {
     return {
+      blockList: [],
       navigator: this.stateService.currentNavigatorState,
       searchInput: ''
     }
   },
   computed: {
-    definitions () {
-      return this.defs.filter(e => {
+    filteredBlockList () {
+      return this.blockList.filter(e => {
         return e.name.toLowerCase().includes(this.searchInput.toLowerCase())
       })
     }
   },
-  asyncComputed: {
-    defs: {
-      get () {
-        return this.blockService.getDefinitions()
-      },
-      default: []
-    }
+  created () {
+    this.blockService.getDefinitions().then(res => { this.blockList = res })
   },
-  components: {ZSideBlock, ZCustomBlock}
+  components: {ZSideboardBlock, ZCustomBlock}
 }
 </script>
 
 <style scoped>
+::-webkit-scrollbar {
+  width: 1px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d0ff00;
+}
 </style>

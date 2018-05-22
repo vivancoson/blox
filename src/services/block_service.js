@@ -27,16 +27,20 @@ export default class BlockService {
       return res.data
     }).then(data => {
       return _.transform(data, (result, value, key) => {
-        const name = key
-        const config = value.config
-        const type = value.type
-        const color = constants.blockTypes[type].color
-        result.push({
-          config,
-          type,
-          name,
-          color
-        })
+        for (let bloc in value) {
+          const name = bloc
+          const clazz = value[bloc].class
+          const config = value[bloc].config
+          const type = key
+          const color = constants.blockTypes[type].color
+          result.push({
+            name,
+            clazz,
+            config,
+            type,
+            color
+          })
+        }
       }, [])
     })
   }
