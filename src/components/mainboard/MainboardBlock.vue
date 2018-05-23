@@ -1,10 +1,10 @@
 <template>
-  <v-layout v-bind:style="blockPosition" class="mainboard-block sideboard-block elevation-10">
+  <v-layout :style="blockPosition" class="mainboard-block elevation-10">
     <v-flex>
-      <v-card v-bind:class="color">
+      <v-card :class="color" class="mainboard-block--size">
         <v-card-title>
-          <div class="body-2" style="width:100%">{{block.name}}</div><br>
-          <span class="body-1">{{block.clazz}}</span>
+          <div class="body-2 mainboard-block--text" :title=block.name>{{block.name}}</div>
+          <span class="body-1 mainboard-block--text" :title=getClassName>{{getClassName}}</span>
         </v-card-title>
 
         <div class="ep"></div>
@@ -61,6 +61,9 @@ export default {
   computed: {
     color () {
       return constants.blockTypes[this.block.type].color
+    },
+    getClassName () {
+      return this.block.clazz.split('.').pop()
     }
   },
   methods: {
@@ -94,10 +97,17 @@ export default {
 </script>
 
 <style scoped>
-.sideboard-block{
+.mainboard-block{
   position: absolute;
-  color: #f4f1d0;
+}
+.mainboard-block--size{
   width: 180px;
+  height: 150px;
+}
+.mainboard-block--text{
+    width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 .block-input{
   background-color: #42928c;

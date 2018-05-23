@@ -15,10 +15,9 @@ import _ from 'lodash'
 import Block from '../../models/block'
 import constants from '../../constants/constants'
 
-function getLastWordPascalCase (word) {
-  const wordRe = /($[a-z])|[A-Z][^A-Z]+/g
-  const wordSplit = word.match(wordRe)
-  return wordSplit[wordSplit.length - 1].toLowerCase()
+function getBlockType (word) {
+  const wordSplit = word.split('.')
+  return wordSplit[wordSplit.length - 3].toLowerCase()
 }
 
 export default {
@@ -44,7 +43,7 @@ export default {
         yamlToJson = this.generatorService.loadFromYaml(e.target.result)
         _.forIn(yamlToJson, (value, key) => {
           const blockId = this.uuidService.uuid()
-          const block = new Block(blockId, key, getLastWordPascalCase(value.class), value.class, value.config)
+          const block = new Block(blockId, key, getBlockType(value.class), value.class, value.config)
           blockMap[key] = {}
           blockMap[key].id = blockId
           blockMap[key].sources = value.sources
