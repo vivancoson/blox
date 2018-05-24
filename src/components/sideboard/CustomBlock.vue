@@ -73,8 +73,8 @@
         </v-form>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="" flat @click.native="clearCustomBlockForm">Fermer</v-btn>
-          <v-btn color="" flat @click.native="createBlock" :disabled="!valid">Créer</v-btn>
+          <v-btn flat @click.native="clearCustomBlockForm">Fermer</v-btn>
+          <v-btn flat @click.native="createBlock" :disabled="!valid">Créer</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
 import ZSideboardBlock from './SideboardBlock'
 import ZCustomBlock from './CustomBlock'
 
