@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Prism from 'prismjs'
 import loadLanguages from 'prismjs/components/index'
-import {safeLoad, safeDump} from 'js-yaml'
+import { safeLoad, safeDump } from 'js-yaml'
 
 export default class GeneratorService {
   constructor () {
@@ -12,9 +12,9 @@ export default class GeneratorService {
     const connectionsByTarget = _.groupBy(connections, 'targetId')
     const result = {}
     const blocks = workflow.blocks || []
-    blocks.forEach((value) => {
+    blocks.forEach(value => {
       const sources = _.chain(connectionsByTarget[value.id] || [])
-        .map((connection) => workflow.getBlock(connection.sourceId).name)
+        .map(connection => workflow.getBlock(connection.sourceId).name)
         .uniq()
         .sort()
         .value()
@@ -31,12 +31,16 @@ export default class GeneratorService {
     })
     if (Object.keys(result).length > 0) {
       const yamlCode = safeDump(result, {
-        'sortKeys': true
+        sortKeys: true
       })
-      return Prism.highlight(yamlCode, Prism.languages.yaml, 'yaml')
+      return yamlCode
     } else {
       return ''
     }
+  }
+
+  generateYamlViewerHTML (yamlCode) {
+    return Prism.highlight(yamlCode, Prism.languages.yaml, 'yaml')
   }
 
   loadFromYaml (yaml) {
