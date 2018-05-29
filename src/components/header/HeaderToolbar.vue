@@ -1,7 +1,7 @@
 <template>
   <v-toolbar class="header-toolbar" dense fixed app>
     <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
-    <v-toolbar-title class="title">Editor</v-toolbar-title>
+    <img src="../../assets/logo.png" class="main-logo-toolbar" alt="logo Edimus"/>
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn @click="importYamlInput" flat>Import YAML file</v-btn>
@@ -71,5 +71,8 @@ export default {
 <style scoped>
 .header-toolbar {
   opacity: 0.7;
+}
+.main-logo-toolbar{
+  height: 100%;
 }
 </style>
