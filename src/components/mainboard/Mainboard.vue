@@ -90,8 +90,12 @@ export default {
 </script>
 
 <style scoped>
-  .mainboard {
-    height: 100vh;
-    position: relative;
-  }
+.mainboard {
+  height: 1000vh;
+  width: 1000vw;
+  position: relative;
+  background-repeat: repeat;
+  background-color: #303030;
+  background-image: url('../../assets/dark-wood.png');
+}
 </style>

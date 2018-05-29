@@ -34,7 +34,9 @@ export default {
 </script>
 
 <style>
-*,
+html{
+  overflow: auto;
+}
 .theme--dark .btn {
   color: #f4f1d0;
 }
