@@ -13,7 +13,7 @@ export default class GeneratorService {
     const result = {}
     const blocks = workflow.blocks || []
     blocks.forEach(value => {
-      const sources = _.chain(connectionsByTarget[value.id] || [])
+      const source = _.chain(connectionsByTarget[value.id] || [])
         .map(connection => workflow.getBlock(connection.sourceId).name)
         .uniq()
         .sort()
@@ -25,8 +25,8 @@ export default class GeneratorService {
         class: clazz,
         config
       }
-      if (sources && sources.length > 0) {
-        result[name].sources = sources
+      if (source && source.length > 0) {
+        result[name].source = source
       }
     })
     if (Object.keys(result).length > 0) {
