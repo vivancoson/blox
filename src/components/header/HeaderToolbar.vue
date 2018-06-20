@@ -40,22 +40,63 @@ export default {
       const file = ev.target.files[0]
 
       reader.onload = e => {
+        let finalGrid = []
+        let levelArray = []
+        let positionX = 230
+        let positionY = 230
+
         yamlToJson = this.generatorService.loadFromYaml(e.target.result)
+
         _.forIn(yamlToJson, (value, key) => {
-          const blockId = this.uuidService.uuid()
-          const block = new Block(blockId, key, getBlockType(value.class), value.class, value.config)
-          blockMap[key] = {}
-          blockMap[key].id = blockId
-          blockMap[key].sources = value.sources
-          block.setPosition(400, 400)
-          this.workflowService.addBlockToWorkflow(currentWorkflow, block)
-          this.stateService.setViewerDirty(true)
-          this.storageService.set(currentWorkflow, this.jsPlumbService.getAllConnections(currentWorkflow), constants.storageKeys.workflow)
+          if (getBlockType(value.class) === 'input') {
+            value.name = key
+            levelArray.push(value)
+            delete yamlToJson[key]
+          }
         })
+        finalGrid.push(levelArray)
+
+        while (Object.keys(yamlToJson).length !== 0) {
+          levelArray = []
+          finalGrid[finalGrid.length - 1].forEach(block => {
+            _.forIn(yamlToJson, (value, key) => {
+              if (value.source.includes(block.name)) {
+                value.name = key
+                levelArray.push(value)
+                delete yamlToJson[key]
+              }
+            })
+          })
+          if (levelArray.length !== 0) {
+            finalGrid.push(levelArray)
+          }
+        }
+
+        finalGrid.forEach(blockColumn => {
+          blockColumn.forEach(value => {
+            const blockId = this.uuidService.uuid()
+            const type = getBlockType(value.class)
+            const block = new Block(blockId, value.name, type, value.class, value.config)
+            block.setPosition(positionX, positionY)
+            positionY += 200
+
+            blockMap[value.name] = {
+              'id': blockId,
+              'source': value.source
+            }
+
+            this.workflowService.addBlockToWorkflow(currentWorkflow, block)
+            this.stateService.setViewerDirty(true)
+            this.storageService.set(currentWorkflow, this.jsPlumbService.getAllConnections(currentWorkflow), constants.storageKeys.workflow)
+          })
+          positionX += 250
+          positionY = 230
+        })
+
         this.$nextTick(() => {
           _.forIn(blockMap, (value, key) => {
-            if (value.sources) {
-              value.sources.forEach(e => {
+            if (value.source) {
+              value.source.forEach(e => {
                 this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id)
               })
             }
