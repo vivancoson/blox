@@ -93,4 +93,7 @@ export default {
   position: relative;
   right: 100%;
 }
+.v-navigation-drawer {
+  padding: 0;
+}
 </style>

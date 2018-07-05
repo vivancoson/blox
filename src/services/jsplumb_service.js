@@ -56,6 +56,10 @@ export default class JsPlumbService {
     this.getInstance(workflow).instance.remove(block.id)
   }
 
+  clearWorkflow (workflow) {
+    this.getInstance(workflow).instance.deleteEveryEndpoint()
+  }
+
   connect (workflow, sourceId, targetId) {
     this.getInstance(workflow).instance.connect({
       source: sourceId,

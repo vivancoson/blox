@@ -1,0 +1,26 @@
+{
+  "hbase": {
+    "table": [
+    ]
+  },
+  "kafka": {
+    "topic": [
+
+    ],
+    "broker": [
+
+    ],
+    "reset": [
+
+    ]
+  },
+  "es": {
+    "index": [
+    ],
+    "hostname": [
+    ]
+  },
+  "orientdb": {
+    "uri": []
+  }
+}

@@ -24,7 +24,10 @@ export default class Workflow {
       this.blocks.splice(elementIndex, 1)
     }
   }
-
+  clear () {
+    this.blocks.splice(0, this.blocks.length)
+    this.index = {}
+  }
   getBlock (id) {
     return this.index[id]
   }

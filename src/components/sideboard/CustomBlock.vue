@@ -84,11 +84,10 @@
 <script>
 import _ from 'lodash'
 import Block from '../../models/block'
-import constants from '../../constants/constants'
 
 export default {
   name: 'ZCustomBlock',
-  inject: ['workflowService', 'uuidService', 'stateService', 'jsPlumbService', 'storageService'],
+  inject: ['workflowService', 'uuidService', 'stateService', 'jsPlumbService'],
   data () {
     return {
       showDialog: false,
@@ -118,7 +117,6 @@ export default {
         block.setPosition(400, 400)
         this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block)
         this.stateService.setViewerDirty(true)
-        this.storageService.set(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), constants.storageKeys.workflow)
         this.clearCustomBlockForm()
       }
     },

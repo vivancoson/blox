@@ -4,6 +4,7 @@
     <img src="../../assets/logo.png" class="main-logo-toolbar" alt="logo Edimus"/>
     <v-spacer></v-spacer>
     <v-toolbar-items>
+      <v-btn @click="clearWorflow" flat>Clear Workflow</v-btn>
       <v-btn @click="importYamlInput" flat>Import YAML file</v-btn>
       <input type="file" id="yaml-file-input" @change="importYaml" hidden>
     </v-toolbar-items>
@@ -13,7 +14,6 @@
 <script>
 import _ from 'lodash'
 import Block from '../../models/block'
-import constants from '../../constants/constants'
 
 function getBlockType (word) {
   const wordSplit = word.split('.')
@@ -22,12 +22,16 @@ function getBlockType (word) {
 
 export default {
   name: 'ZHeaderToolbar',
-  inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService', 'storageService'],
+  inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService'],
   methods: {
     switchDrawer () {
       this.stateService.setDrawerOpen(!this.stateService.currentNavigatorState.drawer)
     },
 
+    clearWorflow () {
+      this.stateService.currentWorkflow.clear()
+      this.jsPlumbService.clearWorkflow(this.stateService.currentWorkflow)
+    },
     importYamlInput () {
       document.getElementById('yaml-file-input').click()
     },
@@ -87,7 +91,6 @@ export default {
 
             this.workflowService.addBlockToWorkflow(currentWorkflow, block)
             this.stateService.setViewerDirty(true)
-            this.storageService.set(currentWorkflow, this.jsPlumbService.getAllConnections(currentWorkflow), constants.storageKeys.workflow)
           })
           positionX += 250
           positionY = 230

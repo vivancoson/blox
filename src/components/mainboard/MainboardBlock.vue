@@ -50,7 +50,7 @@ import constants from '../../constants/constants'
 
 export default {
   name: 'ZMainBlock',
-  inject: ['stateService', 'workflowService', 'jsPlumbService', 'storageService'],
+  inject: ['stateService', 'workflowService', 'jsPlumbService'],
   data: () => ({
     showConfig: false,
     blockPosition: {
@@ -71,7 +71,6 @@ export default {
       const currentWorkflow = this.stateService.currentWorkflow
       this.jsPlumbService.removeConnections(currentWorkflow, this.block)
       this.workflowService.removeBlockFromWorkflow(currentWorkflow, this.block)
-      this.storageService.set(this.stateService.currentWorkflow, this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow), constants.storageKeys.workflow)
     },
     selectBlock () {
       this.stateService.setCurrentBlock({})
