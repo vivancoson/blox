@@ -80,12 +80,15 @@ export default class JsPlumbService {
         allowLoopback: false
       })
     }
-
     if (block.type !== constants.blockTypes.input.value) {
       instance.makeTarget(block.id, {
         allowLoopback: false,
         maxConnections: -1
       })
     }
+  }
+  batch (workflow, batch) {
+    const instance = this.getInstance(workflow).instance
+    instance.batch(batch)
   }
 }

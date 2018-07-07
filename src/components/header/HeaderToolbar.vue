@@ -5,8 +5,10 @@
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn @click="clearWorflow" flat>Clear Workflow</v-btn>
-      <v-btn @click="importYamlInput" flat>Import YAML file</v-btn>
-      <input type="file" id="yaml-file-input" @change="importYaml" hidden>
+      <v-btn @click="importYamlInput" flat>
+        Import YAML file
+        <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden />
+      </v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>
@@ -22,7 +24,7 @@ function getBlockType (word) {
 
 export default {
   name: 'ZHeaderToolbar',
-  inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService'],
+  inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService', 'fileService'],
   methods: {
     switchDrawer () {
       this.stateService.setDrawerOpen(!this.stateService.currentNavigatorState.drawer)
@@ -33,24 +35,21 @@ export default {
       this.jsPlumbService.clearWorkflow(this.stateService.currentWorkflow)
     },
     importYamlInput () {
-      document.getElementById('yaml-file-input').click()
+      this.$refs.fileElement.click()
     },
 
     importYaml (ev) {
       const currentWorkflow = this.stateService.currentWorkflow
       let blockMap = {}
       let yamlToJson = ''
-      const reader = new FileReader()
-      const file = ev.target.files[0]
-
-      reader.onload = e => {
+      const promises = this.fileService.readFiles(ev.target.files)
+      Promise.all(promises).then((files) => {
+        const mergedFiles = files.map(f => f.data).join('\n')
         let finalGrid = []
         let levelArray = []
         let positionX = 230
         let positionY = 230
-
-        yamlToJson = this.generatorService.loadFromYaml(e.target.result)
-
+        yamlToJson = this.generatorService.loadFromYaml(mergedFiles)
         _.forIn(yamlToJson, (value, key) => {
           if (getBlockType(value.class) === 'input') {
             value.name = key
@@ -59,7 +58,6 @@ export default {
           }
         })
         finalGrid.push(levelArray)
-
         while (Object.keys(yamlToJson).length !== 0) {
           levelArray = []
           finalGrid[finalGrid.length - 1].forEach(block => {
@@ -75,7 +73,6 @@ export default {
             finalGrid.push(levelArray)
           }
         }
-
         finalGrid.forEach(blockColumn => {
           blockColumn.forEach(value => {
             const blockId = this.uuidService.uuid()
@@ -83,30 +80,27 @@ export default {
             const block = new Block(blockId, value.name, type, value.class, value.config)
             block.setPosition(positionX, positionY)
             positionY += 200
-
             blockMap[value.name] = {
               'id': blockId,
               'source': value.source
             }
-
             this.workflowService.addBlockToWorkflow(currentWorkflow, block)
-            this.stateService.setViewerDirty(true)
           })
           positionX += 250
           positionY = 230
         })
-
         this.$nextTick(() => {
-          _.forIn(blockMap, (value, key) => {
-            if (value.source) {
-              value.source.forEach(e => {
-                this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id)
-              })
-            }
+          this.jsPlumbService.batch(currentWorkflow, () => {
+            _.forIn(blockMap, (value) => {
+              if (value.source) {
+                value.source.forEach(e => {
+                  this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id)
+                })
+              }
+            })
           })
         })
-      }
-      reader.readAsText(file)
+      })
     }
   }
 }
