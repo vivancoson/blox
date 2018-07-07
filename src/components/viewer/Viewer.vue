@@ -13,7 +13,7 @@
     </v-navigation-drawer>
     <v-layout justify-end>
       <v-btn id="yaml-button" v-on:click="switchDrawer" :disabled="yamlForHTML.length === 0">
-        <span>{{ state.viewer.drawer ? 'view yaml' : 'hide yaml' }}</span>
+        <span>{{ state.viewer.drawer ? 'view yaml' : 'hide yaml'}}</span>
       </v-btn>
     </v-layout>
   </div>
@@ -37,19 +37,21 @@ export default {
   methods: {
     switchDrawer () {
       let nextState = !this.stateService.currentViewerState.drawer
-      this.stateService.setViewerDrawerOpen(nextState)
+      this.stateService.setViewerDrawerClosed(nextState)
     },
     copyToClipboard () {
       window.getSelection().selectAllChildren(document.getElementById('yaml-text'))
       document.execCommand('copy')
     },
     yaml () {
-      this.stateService.setViewerDirty(false)
-      return this.generatorService.generate(
+      const yaml = this.generatorService.generate(
         this.stateService.currentWorkflow,
-        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow),
-        this.state.viewer.viewerDirty
+        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow)
       )
+      if (!this.stateService.currentViewerState.drawer) {
+        this.stateService.setViewerDrawerClosed(!yaml)
+      }
+      return yaml
     },
     downloadYaml (filename) {
       const file = new Blob([this.yaml()], {type: 'application/x-yaml;charset=utf-8'})

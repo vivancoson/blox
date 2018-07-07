@@ -35,8 +35,8 @@ export default class StateService {
   setDrawerOpen (open) {
     this.state.navigator.drawer = open
   }
-  setViewerDrawerOpen (open) {
-    this.state.viewer.drawer = open
+  setViewerDrawerClosed (close) {
+    this.state.viewer.drawer = close
   }
 
   get currentWorkflow () {
