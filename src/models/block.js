@@ -17,7 +17,7 @@ export default class Block {
 }
 
 function setupBlock (block) {
-  Object.keys(block.fields).forEach(key => {
+  Object.keys(block.fields || {}).forEach(key => {
     block.details[key] = block.details[key] || {}
     block.suggestions[key] = block.suggestions[key] || []
   })
