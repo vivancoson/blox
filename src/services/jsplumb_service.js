@@ -67,10 +67,11 @@ export default class JsPlumbService {
     })
   }
 
-  initiateBlock (workflow, block) {
+  initiateBlock (workflow, block, drag) {
     const instance = this.getInstance(workflow).instance
     instance.draggable(block.id, {
-      containment: 'true'
+      containment: 'true',
+      drag: drag
     })
 
     if (block.type !== constants.blockTypes.output.value) {
@@ -79,9 +80,7 @@ export default class JsPlumbService {
         maxConnections: -1,
         allowLoopback: false
       })
-    }
-
-    if (block.type !== constants.blockTypes.input.value) {
+    } else if (block.type !== constants.blockTypes.input.value) {
       instance.makeTarget(block.id, {
         allowLoopback: false,
         maxConnections: -1
