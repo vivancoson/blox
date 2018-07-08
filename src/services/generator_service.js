@@ -46,6 +46,8 @@ export default class GeneratorService {
   }
 
   loadFromYaml (yaml) {
-    return safeLoad(yaml)
+    return safeLoad(yaml, {
+      json: true
+    })
   }
 }

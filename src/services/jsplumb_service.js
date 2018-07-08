@@ -88,4 +88,8 @@ export default class JsPlumbService {
       })
     }
   }
+  batch (workflow, batch) {
+    const instance = this.getInstance(workflow).instance
+    instance.batch(batch)
+  }
 }
