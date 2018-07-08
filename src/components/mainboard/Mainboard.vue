@@ -25,7 +25,7 @@ export default {
     handleDrop (data, event) {
       if (data) {
         const def = data.def
-        const block = new Block(this.uuidService.uuid(), def.name + 'Block', def.type, def.clazz, _.cloneDeep(def.config))
+        const block = new Block(this.uuidService.uuid(), def.name + 'Block', def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions)
         block.setPosition(event.offsetX - 90, event.offsetY - 75)
         this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block)
         this.stateService.setViewerDirty(true)

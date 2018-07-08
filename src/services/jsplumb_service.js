@@ -67,10 +67,11 @@ export default class JsPlumbService {
     })
   }
 
-  initiateBlock (workflow, block) {
+  initiateBlock (workflow, block, drag) {
     const instance = this.getInstance(workflow).instance
     instance.draggable(block.id, {
-      containment: 'true'
+      containment: 'true',
+      drag: drag
     })
 
     if (block.type !== constants.blockTypes.output.value) {

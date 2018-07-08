@@ -1,0 +1,17 @@
+{
+  "hbase": {
+    "table": ["table1", "table2", "table3", "table4"]
+  },
+  "kafka": {
+    "topic": ["topic1", "topic2", "topic3", "topic4"],
+    "broker": ["brokersList1", "brokersList2", "brokersList3"],
+    "reset": ["true", "false"]
+  },
+  "es": {
+    "index": ["index1", "index2", "index3"],
+    "hostname": ["hosts1", "hosts2", "hosts3"]
+  },
+  "orientdb": {
+    "uri": ["quorum1", "quorum2", "quorum3"]
+  }
+}
