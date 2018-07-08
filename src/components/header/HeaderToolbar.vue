@@ -7,8 +7,8 @@
       <v-btn @click="clearWorflow" flat>Clear Workflow</v-btn>
       <v-btn @click="importYamlInput" flat>
         Import YAML file
-        <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden />
       </v-btn>
+      <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden />
     </v-toolbar-items>
   </v-toolbar>
 </template>
