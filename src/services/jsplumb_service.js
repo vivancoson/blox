@@ -80,7 +80,8 @@ export default class JsPlumbService {
         maxConnections: -1,
         allowLoopback: false
       })
-    } else if (block.type !== constants.blockTypes.input.value) {
+    }
+    if (block.type !== constants.blockTypes.input.value) {
       instance.makeTarget(block.id, {
         allowLoopback: false,
         maxConnections: -1

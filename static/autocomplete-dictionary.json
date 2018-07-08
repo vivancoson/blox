@@ -13,5 +13,26 @@
   },
   "orientdb": {
     "uri": ["quorum1", "quorum2", "quorum3"]
+  },
+  "hive": {
+
+  },
+  "flatten": {
+
+  },
+  "null": {
+
+  },
+  "csv": {
+
+  },
+  "xml": {
+
+  },
+  "hdfs": {
+
+  },
+  "log": {
+    
   }
 }
