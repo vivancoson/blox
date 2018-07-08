@@ -13,7 +13,7 @@
     </v-navigation-drawer>
     <v-layout justify-end>
       <v-btn id="yaml-button" v-on:click="switchDrawer" :disabled="yamlForHTML.length === 0">
-        <span>{{ state.viewer.drawer ? 'view yaml' : 'hide yaml'}}</span>
+        <span>{{state.viewer.drawer ? 'view yaml' : 'hide yaml'}}</span>
       </v-btn>
     </v-layout>
   </div>
