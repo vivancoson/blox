@@ -22,8 +22,10 @@ export default class GeneratorService {
       const config = value.fields
       const clazz = value.clazz
       result[name] = {
-        class: clazz,
-        config
+        class: clazz
+      }
+      if (config) {
+        result[name].config = config
       }
       if (source && source.length > 0) {
         result[name].source = source

@@ -37,7 +37,7 @@ export default class BlockService {
             const config = value[bloc].config
             const type = key
             const group = value[bloc].group
-            const suggestions = data.dict[group] || []
+            const suggestions = data.dict[group] || {}
             const description = value[bloc].description || ''
             const details = value[bloc].details || {}
             const color = constants.blockTypes[type].color
