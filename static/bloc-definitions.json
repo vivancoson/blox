@@ -4,12 +4,28 @@
       "class": "classInput1",
       "config": {
         "table": ""
+      },
+      "group": "hbase",
+      "description": "Scans an hbase table",
+      "details": {
+        "table": {
+          "description": "hbase table name",
+          "type": "string"
+        }
       }
     },
     "HiveInput": {
       "class": "classInput2",
       "config": {
         "sql": ""
+      },
+      "group": "hive",
+      "description": "Reads data from a hive source based on a sql expression",
+      "details": {
+        "sql": {
+          "description": "sql expression",
+          "type": "sql"
+        }
       }
     },
     "KafkaInput": {
@@ -18,6 +34,22 @@
         "topic": "",
         "broker": "",
         "reset": ""
+      },
+      "group": "kafka",
+      "description": "Polls data from an unsecured kafka source",
+      "details": {
+        "topic": {
+          "description": "kafka topic name",
+          "type": "string"
+        },
+        "broker": {
+          "description": "kafka brokers list",
+          "type": "string"
+        },
+        "reset": {
+          "description": "read topic from the beginning",
+          "type": "boolean"
+        }
       }
     },
     "SecuredKafkaInput": {
@@ -26,18 +58,50 @@
         "topic": "",
         "broker": "",
         "reset": ""
+      },
+      "group": "kafka",
+      "description": "Polls data from an secured kafka source",
+      "details": {
+        "topic": {
+          "description": "kafka topic name",
+          "type": "string"
+        },
+        "broker": {
+          "description": "kafka brokers list",
+          "type": "string"
+        },
+        "reset": {
+          "description": "read topic from the beginning",
+          "type": "boolean"
+        }
       }
     },
     "CsvInput": {
       "class": "classInput5",
       "config": {
         "file": ""
+      },
+      "group": "csv",
+      "description": "Reads data from a csv input",
+      "details": {
+        "file": {
+          "description": "file path",
+          "type": "path"
+        }
       }
     },
     "XmlInput": {
       "class": "classInput6",
       "config": {
         "XmlInputFolder": ""
+      },
+      "group": "xml",
+      "description": "Reads data from a xml input folder",
+      "details": {
+        "file": {
+          "description": "directory path",
+          "type": "path"
+        }
       }
     }
   },
@@ -47,6 +111,18 @@
       "config": {
         "table": "",
         "field": ""
+      },
+      "group": "hbase",
+      "description": "Gets data from an hbase source based on a field value",
+      "details": {
+        "table": {
+          "description": "hbase table name",
+          "type": "string"
+        },
+        "field": {
+          "description": "xpath to field value [hbase row_id]",
+          "type": "xpath"
+        }
       }
     },
     "HBaseGet": {
@@ -55,25 +131,51 @@
         "table": "",
         "field": "",
         "target": ""
+      },
+      "group": "hbase",
+      "description": "Gets data from an hbase source based on a field value and puts the result in the target attribute",
+      "details": {
+        "table": {
+          "description": "hbase table name",
+          "type": "string"
+        },
+        "field": {
+          "description": "xpath to field value [hbase row_id]",
+          "type": "xpath"
+        },
+        "target": {
+          "description": "hbase result attribute holder",
+          "type": "string"
+        }
       }
     },
     "MapperTransformer": {
       "class": "classMiddleware3",
       "config": {
         "mapper": ""
+      },
+      "group": "mapper",
+      "description": "transforms the source based on a json document",
+      "details": {
+        "mapper": {
+          "description": "mapper json document",
+          "type": "json"
+        }
       }
     },
     "FlattenTransformer": {
       "class": "classMiddleware4",
       "config": {
         "flat": ""
-      }
+      },
+      "group": "flatten"
     },
     "FilterXPath": {
       "class": "classMiddleware5",
       "config": {
         "filter": ""
-      }
+      },
+      "group": "filter"
     },
     "HBaseFlattenLink": {
       "class": "classMiddleware6",
@@ -81,7 +183,8 @@
         "source": "",
         "target": "",
         "prefix": ""
-      }
+      },
+      "group": "flatten"
     },
     "HBaseScanRange": {
       "class": "classMiddleware7",
@@ -90,10 +193,12 @@
         "range_in": "",
         "range_out": "",
         "target": ""
-      }
+      },
+      "group": "hbase"
     },
     "NullIfEmpty": {
-      "class": "classMiddleware8"
+      "class": "classMiddleware8",
+      "group": "null"
     }
   },
   "output": {
@@ -101,13 +206,15 @@
       "class": "classOutput1",
       "config": {
         "table": ""
-      }
+      },
+      "group": "hbase"
     },
     "HBaseDeleteOutput": {
       "class": "classOutput2",
       "config": {
         "table": ""
-      }
+      },
+      "group": "hbase"
     },
     "ElasticsearchOutput": {
       "class": "classOutput3",
@@ -115,7 +222,8 @@
         "index": "",
         "hostname": "",
         "port": ""
-      }
+      },
+      "group": "es"
     },
     "SecuredElasticsearchOutput": {
       "class": "classOutput4",
@@ -126,21 +234,24 @@
         "user": "",
         "password": "",
         "salt_file": ""
-      }
+      },
+      "group": "es"
     },
     "KafkaOutput": {
       "class": "classOutput5",
       "config": {
         "topic": "",
         "broker": ""
-      }
+      },
+      "group": "kafka"
     },
     "SecuredKafkaOuput": {
       "class": "classOutput6",
       "config": {
         "topic": "",
         "broker": ""
-      }
+      },
+      "group": "kafka"
     },
     "OrientDBOutput": {
       "class": "classOutput7",
@@ -148,10 +259,12 @@
         "uri": "",
         "user": "",
         "password": ""
-      }
+      },
+      "group": "orientdb"
     },
     "LogOutput": {
-      "class": "classOutput8"
+      "class": "classOutput8",
+      "group": "log"
     }
   }
 }

@@ -86,6 +86,7 @@ export default {
     this.setBlockPosition(this.block.positionX, this.block.positionY)
   },
   mounted () {
+    console.log(this.block)
     this.$nextTick(() => {
       this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block)
     })

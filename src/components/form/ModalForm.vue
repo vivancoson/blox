@@ -20,13 +20,21 @@
                   <v-flex xs12>
                     <h3>Config:</h3>
                   </v-flex>
+                  <div v-bind:key="key" v-for="(value, key) in blockCopy.fields">
                   <v-text-field
-                    v-for="(value, key) in blockCopy.fields"
+                    v-if="!blockCopy.suggestions[key].length"
                     v-bind:label="key | capitalize"
                     v-model="blockCopy.fields[key]"
-                    v-bind:key="key"
-                    hide-details
+                    v-bind:hint="blockCopy.details[key].description | capitalize"
                   ></v-text-field>
+                  <v-autocomplete
+                    v-if="blockCopy.suggestions[key].length"
+                    v-bind:label="key | capitalize"
+                    v-model="blockCopy.fields[key]"
+                    v-bind:hint="blockCopy.details[key].description | capitalize"
+                    v-bind:items="blockCopy.suggestions[key]"
+                    ></v-autocomplete>
+                  </div>
                 </v-flex>
               </v-layout>
             </v-container>

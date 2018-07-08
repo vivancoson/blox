@@ -4,7 +4,7 @@
       <v-card ref="drag" v-bind:class="def.color" class="pa-2 ma-2 elevation-9" slot="activator">
         <div class="caption">{{def.name}}</div>
       </v-card>
-      <span>{{def.clazz}}</span>
+      <span>{{def.description || def.clazz}}</span>
     </v-tooltip>
   </drag>
 </template>

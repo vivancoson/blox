@@ -23,25 +23,40 @@ export default class BlockService {
   }
 
   getDefinitions () {
-    return axios.get('static/bloc-definitions.json').then(res => {
-      return res.data
-    }).then(data => {
-      return _.transform(data, (result, value, key) => {
-        for (let bloc in value) {
-          const name = bloc
-          const clazz = value[bloc].class
-          const config = value[bloc].config
-          const type = key
-          const color = constants.blockTypes[type].color
-          result.push({
-            name,
-            clazz,
-            config,
-            type,
-            color
-          })
+    return axios.all([axios.get('static/bloc-definitions.json'), axios.get('static/autocomplete-dictionary.json')])
+      .then(axios.spread((defs, dict) => {
+        return {
+          defs: defs.data,
+          dict: dict.data
         }
-      }, [])
-    })
+      })).then(data => {
+        return _.transform(data.defs, (result, value, key) => {
+          for (let bloc in value) {
+            const name = bloc
+            const clazz = value[bloc].class
+            const config = value[bloc].config
+            const type = key
+            const group = value[bloc].group
+            const suggestions = data.dict[group] || []
+            const description = value[bloc].description || ''
+            const details = value[bloc].details || {}
+            const color = constants.blockTypes[type].color
+            _.forOwn(config, (value, key) => {
+              suggestions[key] = suggestions[key] || []
+              details[key] = details[key] || {}
+            })
+            result.push({
+              name,
+              clazz,
+              config,
+              type,
+              color,
+              description,
+              details,
+              suggestions
+            })
+          }
+        }, [])
+      })
   }
 }
