@@ -23,65 +23,65 @@
 export default {
   name: 'ZViewer',
   inject: ['stateService', 'generatorService', 'jsPlumbService'],
-  data () {
+  data() {
     return {
-      state: this.stateService.state
-    }
+      state: this.stateService.state,
+    };
   },
   computed: {
-    yamlForHTML () {
-      this.stateService.setViewerDirty(false)
-      return this.generatorService.generateYamlViewerHTML(this.yaml())
-    }
+    yamlForHTML() {
+      this.stateService.setViewerDirty(false);
+      return this.generatorService.generateYamlViewerHTML(this.yaml());
+    },
   },
   methods: {
-    switchDrawer () {
-      let nextState = !this.stateService.currentViewerState.drawer
-      this.stateService.setViewerDrawerClosed(nextState)
+    switchDrawer() {
+      const nextState = !this.stateService.currentViewerState.drawer;
+      this.stateService.setViewerDrawerClosed(nextState);
     },
-    copyToClipboard () {
-      window.getSelection().selectAllChildren(document.getElementById('yaml-text'))
-      document.execCommand('copy')
+    copyToClipboard() {
+      window.getSelection().selectAllChildren(document.getElementById('yaml-text'));
+      document.execCommand('copy');
     },
-    yaml () {
+    yaml() {
       const yaml = this.generatorService.generate(
         this.stateService.currentWorkflow,
-        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow)
-      )
+        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow),
+      );
       if (!this.stateService.currentViewerState.drawer) {
-        this.stateService.setViewerDrawerClosed(!yaml)
+        this.stateService.setViewerDrawerClosed(!yaml);
       }
-      return yaml
+      return yaml;
     },
-    downloadYaml (filename) {
-      const file = new Blob([this.yaml()], {type: 'application/x-yaml;charset=utf-8'})
+    downloadYaml(filename) {
+      const file = new Blob([this.yaml()], { type: 'application/x-yaml;charset=utf-8' });
       if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(file, filename)
+        window.navigator.msSaveOrOpenBlob(file, filename);
       } else {
-        const a = document.createElement('a')
-        const url = URL.createObjectURL(file)
-        a.href = url
-        a.download = filename
-        document.body.appendChild(a)
-        a.click()
-        setTimeout(function () {
-          document.body.removeChild(a)
-          window.URL.revokeObjectURL(url)
-        }, 0)
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-.yaml-viewer{
+.yaml-viewer {
   position: fixed;
   z-index: 1;
   bottom: 0;
   left: 100%;
 }
-.yaml-viewer-toolbar{
+.yaml-viewer-toolbar {
   position: absolute;
   right: 0;
 }
@@ -90,8 +90,10 @@ export default {
   max-height: 500px;
   padding: 10px;
   overflow: auto;
+  background-color: inherit;
+  color: inherit;
 }
-#yaml-button{
+#yaml-button {
   position: relative;
   right: 100%;
 }

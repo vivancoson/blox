@@ -15,11 +15,11 @@
 </template>
 
 <script>
-import ZHeaderToolbar from './components/header/HeaderToolbar'
-import ZSideBoard from './components/sideboard/Sideboard'
-import ZMainBoard from './components/mainboard/Mainboard'
-import ZModalForm from './components/form/ModalForm'
-import ZViewer from './components/viewer/Viewer.vue'
+import ZHeaderToolbar from './components/header/HeaderToolbar.vue';
+import ZSideBoard from './components/sideboard/Sideboard.vue';
+import ZMainBoard from './components/mainboard/Mainboard.vue';
+import ZModalForm from './components/form/ModalForm.vue';
+import ZViewer from './components/viewer/Viewer.vue';
 
 export default {
   name: 'App',
@@ -28,16 +28,17 @@ export default {
     ZSideBoard,
     ZMainBoard,
     ZModalForm,
-    ZViewer
-  }
-}
+    ZViewer,
+  },
+};
 </script>
 
 <style>
-html{
+html {
   overflow: auto;
 }
-.theme--dark .btn {
+.theme--dark .v-btn,
+.theme--dark .v-card {
   color: #f4f1d0;
 }
 #app {

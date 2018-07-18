@@ -12,29 +12,27 @@
 <script>
 export default {
   name: 'ZSideboardBlock',
-  data () {
-    const el = () => {
-      return this.$refs.drag
-    }
+  data() {
+    const el = () => this.$refs.drag;
     return {
       dragData: {
         def: this.def,
-        el
-      }
-    }
+        el,
+      },
+    };
   },
-  props: ['def']
-}
+  props: ['def'],
+};
 </script>
 
 <style scoped>
-.block-input{
+.block-input {
   background-color: #42928c;
 }
-.block-middleware{
+.block-middleware {
   background-color: #b54a48;
 }
-.block-output{
+.block-output {
   background-color: #80495e;
 }
 </style>

@@ -46,7 +46,7 @@
 
 <script>
 
-import constants from '../../constants/constants'
+import constants from '../../constants/constants';
 
 export default {
   name: 'ZMainBlock',
@@ -55,71 +55,71 @@ export default {
     showConfig: false,
     blockPosition: {
       left: '0px',
-      top: '0px'
-    }
+      top: '0px',
+    },
   }),
   computed: {
-    color () {
-      return constants.blockTypes[this.block.type].color
+    color() {
+      return constants.blockTypes[this.block.type].color;
     },
-    getClassName () {
-      return this.block.clazz.split('.').pop()
-    }
+    getClassName() {
+      return this.block.clazz.split('.').pop();
+    },
   },
   methods: {
-    removeBlock () {
-      const currentWorkflow = this.stateService.currentWorkflow
-      this.jsPlumbService.removeConnections(currentWorkflow, this.block)
-      this.workflowService.removeBlockFromWorkflow(currentWorkflow, this.block)
+    removeBlock() {
+      const currentWorkflow = this.stateService.currentWorkflow;
+      this.jsPlumbService.removeConnections(currentWorkflow, this.block);
+      this.workflowService.removeBlockFromWorkflow(currentWorkflow, this.block);
     },
-    selectBlock () {
-      this.stateService.setCurrentBlock({})
-      this.stateService.setCurrentBlock(this.block)
-      this.stateService.setFormState(true)
+    selectBlock() {
+      this.stateService.setCurrentBlock({});
+      this.stateService.setCurrentBlock(this.block);
+      this.stateService.setFormState(true);
     },
-    setBlockPosition (left, top) {
-      this.blockPosition.left = left + 'px'
-      this.blockPosition.top = top + 'px'
-    }
+    setBlockPosition(left, top) {
+      this.blockPosition.left = `${left}px`;
+      this.blockPosition.top = `${top}px`;
+    },
   },
-  beforeMount () {
-    this.setBlockPosition(this.block.positionX, this.block.positionY)
+  beforeMount() {
+    this.setBlockPosition(this.block.positionX, this.block.positionY);
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
-      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block, ({pos}) => {
-        this.block.setPosition(pos[0], pos[1])
-      })
-    })
+      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block, ({ pos }) => {
+        this.block.setPosition(pos[0], pos[1]);
+      });
+    });
   },
   props: ['block'],
-  components: {}
-}
+  components: {},
+};
 </script>
 
 <style scoped>
-.mainboard-block{
+.mainboard-block {
   position: absolute;
 }
-.mainboard-block--size{
+.mainboard-block--size {
   width: 180px;
   height: 150px;
 }
-.mainboard-block--text{
-    width: 150px;
-    text-overflow: ellipsis;
-    overflow: hidden;
+.mainboard-block--text {
+  width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
-.block-input{
+.block-input {
   background-color: #42928c;
 }
-.block-middleware{
+.block-middleware {
   background-color: #b54a48;
 }
-.block-output{
+.block-output {
   background-color: #80495e;
 }
-.ep{
+.ep {
   height: 30px;
   border: 1px solid #f4f1d0;
   margin: -8px 14px 0px;

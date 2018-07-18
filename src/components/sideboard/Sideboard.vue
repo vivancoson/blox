@@ -12,31 +12,29 @@
 </template>
 
 <script>
-import ZSideboardBlock from './SideboardBlock'
-import ZCustomBlock from './CustomBlock'
+import ZSideboardBlock from './SideboardBlock.vue';
+import ZCustomBlock from './CustomBlock.vue';
 
 export default {
   name: 'ZSideboard',
   inject: ['blockService', 'stateService'],
-  data () {
+  data() {
     return {
       blockList: [],
       navigator: this.stateService.currentNavigatorState,
-      searchInput: ''
-    }
+      searchInput: '',
+    };
   },
   computed: {
-    filteredBlockList () {
-      return this.blockList.filter(e => {
-        return e.name.toLowerCase().includes(this.searchInput.toLowerCase())
-      })
-    }
+    filteredBlockList() {
+      return this.blockList.filter(e => e.name.toLowerCase().includes(this.searchInput.toLowerCase()));
+    },
   },
-  created () {
-    this.blockService.getDefinitions().then(res => { this.blockList = res })
+  created() {
+    this.blockService.getDefinitions().then((res) => { this.blockList = res; });
   },
-  components: {ZSideboardBlock, ZCustomBlock}
-}
+  components: { ZSideboardBlock, ZCustomBlock },
+};
 </script>
 
 <style scoped>

@@ -54,49 +54,49 @@
 
 <script>
 
-import _ from 'lodash'
+import _ from 'lodash';
 
 export default {
   name: 'ZModalForm',
   inject: ['stateService'],
-  data () {
+  data() {
     return {
       valid: false,
       workflow: this.stateService.state.workflow,
-      form: this.stateService.state.form
-    }
+      form: this.stateService.state.form,
+    };
   },
   computed: {
-    blockCopy () {
-      return _.cloneDeep(this.workflow.currentBlock)
-    }
+    blockCopy() {
+      return _.cloneDeep(this.workflow.currentBlock);
+    },
   },
   methods: {
-    close () {
-      this.stateService.setFormState(false)
+    close() {
+      this.stateService.setFormState(false);
     },
-    save () {
+    save() {
       if (this.$refs.formCustomBlock.validate()) {
-        this.workflow.currentBlock.name = this.blockCopy.name
+        this.workflow.currentBlock.name = this.blockCopy.name;
         _.forOwn(this.blockCopy.fields, (value, key) => {
-          this.workflow.currentBlock.fields[key] = value
-        })
-        this.stateService.setFormState(false)
+          this.workflow.currentBlock.fields[key] = value;
+        });
+        this.stateService.setFormState(false);
       }
-    }
+    },
   },
   filters: {
-    capitalize: function (value) {
-      if (!value) return ''
-      value = value.toString()
-      return value.charAt(0).toUpperCase() + value.slice(1)
-    }
-  }
-}
+    capitalize(value) {
+      if (!value) return '';
+      const valueToString = value.toString();
+      return valueToString.charAt(0).toUpperCase() + valueToString.slice(1);
+    },
+  },
+};
 </script>
 
 <style scoped>
-.headline{
+.headline {
   overflow: hidden;
   overflow-wrap: break-word;
 }

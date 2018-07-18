@@ -1,64 +1,64 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
 export default class WorkflowService {
   workflows = [];
-  index = {}
+  index = {};
 
-  addWorkflow ({workflow, links}) {
+  addWorkflow({ workflow, links }) {
     if (!this.index[workflow.id]) {
       this.workflows.push({
         workflow,
-        links
-      })
+        links,
+      });
       this.index[workflow.id] = {
         workflow,
-        links
-      }
+        links,
+      };
     }
   }
 
-  removeWorkflow (worflow) {
-    this.removeWorkflowById(worflow.id)
+  removeWorkflow(worflow) {
+    this.removeWorkflowById(worflow.id);
   }
 
-  removeWorkflowById (id) {
+  removeWorkflowById(id) {
     if (this.index[id]) {
-      const index = _.findIndex(this.workflows, (w) => w.workflow.id === id)
-      this.workflows.splice(index, 1)
-      delete this.index[id]
+      const index = _.findIndex(this.workflows, w => w.workflow.id === id);
+      this.workflows.splice(index, 1);
+      delete this.index[id];
     }
   }
 
-  addBlockToWorkflow (workflow, block) {
-    this.addBlockToWorkflowById(workflow.id, block)
+  addBlockToWorkflow(workflow, block) {
+    this.addBlockToWorkflowById(workflow.id, block);
   }
 
-  addBlockToWorkflowById (workflowId, block) {
-    const workflow = this.getWorkflow(workflowId)
+  addBlockToWorkflowById(workflowId, block) {
+    const workflow = this.getWorkflow(workflowId);
     if (workflow) {
-      workflow.addBlock(block)
+      workflow.addBlock(block);
     }
   }
 
-  removeBlockFromWorkflow (workflow, block) {
-    this.removeBlockFromWorkflowById(workflow.id, block)
+  removeBlockFromWorkflow(workflow, block) {
+    this.removeBlockFromWorkflowById(workflow.id, block);
   }
 
-  removeBlockFromWorkflowById (workflowId, block) {
-    const workflow = this.getWorkflow(workflowId)
+  removeBlockFromWorkflowById(workflowId, block) {
+    const workflow = this.getWorkflow(workflowId);
     if (workflow) {
-      workflow.removeBlock(block)
+      workflow.removeBlock(block);
     }
   }
 
-  getWorkflow (id) {
-    return this.getWorkflowAndLinks(id).workflow
+  getWorkflow(id) {
+    return this.getWorkflowAndLinks(id).workflow;
   }
-  getWorkflowAndLinks (id) {
-    return this.index[id]
+  getWorkflowAndLinks(id) {
+    return this.index[id];
   }
 
-  get workflowNumber () {
-    return this.workflows.length
+  get workflowNumber() {
+    return this.workflows.length;
   }
 }

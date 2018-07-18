@@ -1,38 +1,39 @@
-import _ from 'lodash'
+import _ from 'lodash';
+
 export default class Workflow {
-  blocks = []
-  index = {}
-  constructor (id) {
-    this.id = id
+  blocks = [];
+  index = {};
+  constructor(id) {
+    this.id = id;
   }
 
-  addBlock (block) {
+  addBlock(block) {
     if (!this.index[block.id]) {
-      this.blocks.push(block)
-      this.index[block.id] = block
+      this.blocks.push(block);
+      this.index[block.id] = block;
     }
   }
 
-  removeBlock (block) {
-    this.removeBlockById(block.id)
+  removeBlock(block) {
+    this.removeBlockById(block.id);
   }
 
-  removeBlockById (id) {
+  removeBlockById(id) {
     if (this.index[id]) {
-      delete this.index[id]
-      const elementIndex = _.findIndex(this.blocks, {id: id})
-      this.blocks.splice(elementIndex, 1)
+      delete this.index[id];
+      const elementIndex = _.findIndex(this.blocks, { id });
+      this.blocks.splice(elementIndex, 1);
     }
   }
-  clear () {
-    this.blocks.splice(0, this.blocks.length)
-    this.index = {}
+  clear() {
+    this.blocks.splice(0, this.blocks.length);
+    this.index = {};
   }
-  getBlock (id) {
-    return this.index[id]
+  getBlock(id) {
+    return this.index[id];
   }
 
-  get blockNumber () {
-    return this.blocks.length
+  get blockNumber() {
+    return this.blocks.length;
   }
 }

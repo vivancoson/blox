@@ -82,13 +82,13 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import Block from '../../models/block'
+import _ from 'lodash';
+import Block from '../../models/block';
 
 export default {
   name: 'ZCustomBlock',
   inject: ['workflowService', 'uuidService', 'stateService', 'jsPlumbService'],
-  data () {
+  data() {
     return {
       showDialog: false,
       valid: false,
@@ -96,41 +96,41 @@ export default {
       blockType: '',
       blockClazz: '',
       blockConfig: [],
-      nextParamsId: 0
-    }
+      nextParamsId: 0,
+    };
   },
   methods: {
-    addNewParamsInConfig: function () {
+    addNewParamsInConfig() {
       this.blockConfig.push({
-        id: this.nextParamsId++,
+        id: this.nextParamsId += 1,
         name: '',
-        value: ''
-      })
+        value: '',
+      });
     },
-    createBlock () {
+    createBlock() {
       if (this.$refs.formCustomBlock.validate()) {
-        const config = {}
-        _.forEach(this.blockConfig, function (e) {
-          config[e.name] = e.value
-        })
-        const block = new Block(this.uuidService.uuid(), this.blockName, this.blockType, this.blockClazz, _.cloneDeep(config))
-        block.setPosition(400, 400)
-        this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block)
-        this.stateService.setViewerDirty(true)
-        this.clearCustomBlockForm()
+        const config = {};
+        _.forEach(this.blockConfig, (e) => {
+          config[e.name] = e.value;
+        });
+        const block = new Block(this.uuidService.uuid(), this.blockName, this.blockType, this.blockClazz, _.cloneDeep(config));
+        block.setPosition(400, 400);
+        this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block);
+        this.stateService.setViewerDirty(true);
+        this.clearCustomBlockForm();
       }
     },
-    clearCustomBlockForm () {
-      this.$refs.formCustomBlock.reset()
-      this.blockConfig = []
-      this.showDialog = false
-    }
-  }
-}
+    clearCustomBlockForm() {
+      this.$refs.formCustomBlock.reset();
+      this.blockConfig = [];
+      this.showDialog = false;
+    },
+  },
+};
 </script>
 
 <style scoped>
-.BtnNoTextTransform{
-  text-transform: none
+.BtnNoTextTransform {
+  text-transform: none;
 }
 </style>
