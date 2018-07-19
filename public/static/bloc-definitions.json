@@ -1,7 +1,7 @@
 {
   "input": {
     "HBaseInput": {
-      "class": "classInput1",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.hbase.HBaseInput",
       "config": {
         "table": ""
       },
@@ -15,7 +15,7 @@
       }
     },
     "HiveInput": {
-      "class": "classInput2",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.hive.HiveInput",
       "config": {
         "sql": ""
       },
@@ -29,7 +29,7 @@
       }
     },
     "KafkaInput": {
-      "class": "classInput3",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.kafka.KafkaInput",
       "config": {
         "topic": "",
         "broker": "",
@@ -53,7 +53,7 @@
       }
     },
     "SecuredKafkaInput": {
-      "class": "classInput4",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.kafka.SecuredKafkaInput",
       "config": {
         "topic": "",
         "broker": "",
@@ -77,7 +77,7 @@
       }
     },
     "CsvInput": {
-      "class": "classInput5",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.files.Csv",
       "config": {
         "file": ""
       },
@@ -91,7 +91,7 @@
       }
     },
     "XmlInput": {
-      "class": "classInput6",
+      "class": "fr.edf.dco.edma.ece.sparktimus.input.files.XmlInput",
       "config": {
         "XmlInputFolder": ""
       },
@@ -107,7 +107,7 @@
   },
   "middleware": {
     "BulkGet": {
-      "class": "classMiddleware1",
+      "class": "fr.edf.dco.edma.ece.sparktimus.middleware.hbase.BulkGet",
       "config": {
         "table": "",
         "field": ""
@@ -126,14 +126,15 @@
       }
     },
     "HBaseGet": {
-      "class": "classMiddleware2",
+      "class": "fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet",
       "config": {
         "table": "",
         "field": "",
         "target": ""
       },
       "group": "hbase",
-      "description": "Gets data from an hbase source based on a field value and puts the result in the target attribute",
+      "description":
+        "Gets data from an hbase source based on a field value and puts the result in the target attribute",
       "details": {
         "table": {
           "description": "hbase table name",
@@ -150,7 +151,8 @@
       }
     },
     "MapperTransformer": {
-      "class": "classMiddleware3",
+      "class":
+        "fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer",
       "config": {
         "mapper": ""
       },
@@ -164,21 +166,23 @@
       }
     },
     "FlattenTransformer": {
-      "class": "classMiddleware4",
+      "class":
+        "fr.edf.dco.edma.ece.sparktimus.middleware.flatten.FlattenTransformer",
       "config": {
         "flat": ""
       },
       "group": "flatten"
     },
     "FilterXPath": {
-      "class": "classMiddleware5",
+      "class": "fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath",
       "config": {
         "filter": ""
       },
       "group": "filter"
     },
     "HBaseFlattenLink": {
-      "class": "classMiddleware6",
+      "class":
+        "fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink",
       "config": {
         "source": "",
         "target": "",
@@ -187,7 +191,7 @@
       "group": "flatten"
     },
     "HBaseScanRange": {
-      "class": "classMiddleware7",
+      "class": "fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseScanRange",
       "config": {
         "table": "",
         "range_in": "",
@@ -197,27 +201,28 @@
       "group": "hbase"
     },
     "NullIfEmpty": {
-      "class": "classMiddleware8",
+      "class": "fr.edf.dco.edma.ece.sparktimus.middleware.mapper.NullIfEmpty",
       "group": "null"
     }
   },
   "output": {
     "HBaseOutput": {
-      "class": "classOutput1",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput",
       "config": {
         "table": ""
       },
       "group": "hbase"
     },
     "HBaseDeleteOutput": {
-      "class": "classOutput2",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseDeleteOutput",
       "config": {
         "table": ""
       },
       "group": "hbase"
     },
     "ElasticsearchOutput": {
-      "class": "classOutput3",
+      "class":
+        "fr.edf.dco.edma.ece.sparktimus.output.elasticsearch.ElasticsearchOutput",
       "config": {
         "index": "",
         "hostname": "",
@@ -226,7 +231,8 @@
       "group": "es"
     },
     "SecuredElasticsearchOutput": {
-      "class": "classOutput4",
+      "class":
+        "fr.edf.dco.edma.ece.sparktimus.output.elasticsearch.SecuredElasticsearchOutput",
       "config": {
         "index": "",
         "hostname": "",
@@ -238,7 +244,7 @@
       "group": "es"
     },
     "KafkaOutput": {
-      "class": "classOutput5",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.kafka.KafkaOutput",
       "config": {
         "topic": "",
         "broker": ""
@@ -246,7 +252,7 @@
       "group": "kafka"
     },
     "SecuredKafkaOuput": {
-      "class": "classOutput6",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.kafka.SecuredKafkaOuput",
       "config": {
         "topic": "",
         "broker": ""
@@ -254,7 +260,7 @@
       "group": "kafka"
     },
     "OrientDBOutput": {
-      "class": "classOutput7",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.graph.OrientDB",
       "config": {
         "uri": "",
         "user": "",
@@ -263,7 +269,7 @@
       "group": "orientdb"
     },
     "LogOutput": {
-      "class": "classOutput8",
+      "class": "fr.edf.dco.edma.ece.sparktimus.output.log.LogOutput",
       "group": "log"
     }
   }

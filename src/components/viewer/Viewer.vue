@@ -1,60 +1,68 @@
 <template>
-  <div class="yaml-viewer">
-    <v-navigation-drawer stateless v-model="state.viewer.drawer">
-      <div class="yaml-viewer-toolbar">
-        <v-btn v-on:click="copyToClipboard" light icon>
-          <v-icon>content_copy</v-icon>
-        </v-btn>
-        <v-btn v-on:click="downloadYaml('worflow.yaml')" light icon>
-          <v-icon>save_alt</v-icon>
-        </v-btn>
-      </div>
+  <div>
+    <v-bottom-sheet hide-overlay inset v-model="yamlViewerOpen">
+      <v-card class="yaml-viewer">
+        <div class="yaml-viewer-toolbar">
+          <v-btn @click="copyToClipboard" icon>
+            <v-icon>content_copy</v-icon>
+          </v-btn>
+          <v-btn @click="downloadYaml" icon>
+            <v-icon>save_alt</v-icon>
+          </v-btn>
+        </div>
+      </v-card>
       <code id="yaml-text" v-html="yamlForHTML"></code>
-    </v-navigation-drawer>
+    </v-bottom-sheet>
+
     <v-layout justify-end>
-      <v-btn id="yaml-button" v-on:click="switchDrawer" :disabled="yamlForHTML.length === 0">
-        <span>{{state.viewer.drawer ? 'view yaml' : 'hide yaml'}}</span>
+      <v-btn id="yaml-viewer-toggle-button" @click="switchViewerOpen" :disabled="yamlForHTML.length === 0">
+        <span>{{yamlViewerOpen ? 'hide yaml' : 'view yaml'}}</span>
       </v-btn>
     </v-layout>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 export default {
   name: 'ZViewer',
   inject: ['stateService', 'generatorService', 'jsPlumbService'],
-  data() {
-    return {
-      state: this.stateService.state,
-    };
-  },
   computed: {
     yamlForHTML() {
-      this.stateService.setViewerDirty(false);
-      return this.generatorService.generateYamlViewerHTML(this.yaml());
+      return this.generatorService.generateYamlViewerHTML(this.generateYaml());
+    },
+    yamlViewerOpen: {
+      get() {
+        return this.$store.state.yamlViewerOpen;
+      },
+      set() {
+        this.setViewerOpen(false);
+      },
+    },
+  },
+  watch: {
+    yamlForHTML() {
+      if (this.yamlForHTML === '') {
+        this.setViewerOpen(false);
+      }
     },
   },
   methods: {
-    switchDrawer() {
-      const nextState = !this.stateService.currentViewerState.drawer;
-      this.stateService.setViewerDrawerClosed(nextState);
-    },
     copyToClipboard() {
       window.getSelection().selectAllChildren(document.getElementById('yaml-text'));
       document.execCommand('copy');
     },
-    yaml() {
-      const yaml = this.generatorService.generate(
+    generateYaml() {
+      return this.generatorService.generate(
         this.stateService.currentWorkflow,
         this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow),
       );
-      if (!this.stateService.currentViewerState.drawer) {
-        this.stateService.setViewerDrawerClosed(!yaml);
-      }
-      return yaml;
     },
-    downloadYaml(filename) {
-      const file = new Blob([this.yaml()], { type: 'application/x-yaml;charset=utf-8' });
+    downloadYaml() {
+      const filename = 'workflow.yaml';
+      const file = new Blob([this.generateYaml()], { type: 'application/x-yaml;charset=utf-8' });
+
       if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(file, filename);
       } else {
@@ -70,34 +78,36 @@ export default {
         }, 0);
       }
     },
+    ...mapMutations([
+      'switchViewerOpen',
+      'setViewerOpen',
+    ]),
   },
 };
 </script>
 
 <style scoped>
-.yaml-viewer {
+#yaml-viewer-toggle-button {
   position: fixed;
-  z-index: 1;
   bottom: 0;
-  left: 100%;
+  right: 0;
 }
 .yaml-viewer-toolbar {
   position: absolute;
   right: 0;
 }
-.yaml-viewer code {
-  display: block;
-  max-height: 500px;
+code {
   padding: 10px;
   overflow: auto;
-  background-color: inherit;
-  color: inherit;
+  background-color: #252525;
+  width: 100%;
+  max-height: 500px;
+  overflow: auto;
 }
-#yaml-button {
-  position: relative;
-  right: 100%;
+::-webkit-scrollbar {
+  width: 5px;
 }
-.v-navigation-drawer {
-  padding: 0;
+::-webkit-scrollbar-thumb {
+  background: #42928c;
 }
 </style>

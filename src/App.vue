@@ -54,4 +54,12 @@ html {
 .jtk-drag {
   z-index: 2;
 }
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background: #212121;
+}
+::-webkit-scrollbar-thumb {
+  background: #f4f1d0;
+}
 </style>
