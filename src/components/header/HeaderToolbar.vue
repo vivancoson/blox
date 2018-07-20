@@ -1,14 +1,65 @@
 <template>
-  <v-toolbar class="header-toolbar" dense fixed app>
-    <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
-    <img src="../../assets/logo.png" class="main-logo-toolbar" alt="logo Edimus"/>
-    <v-spacer></v-spacer>
-    <v-toolbar-items>
-      <v-btn @click="clearWorflow" flat>Clear Workflow</v-btn>
-      <v-btn @click="importYamlInput" flat>Import YAML file</v-btn>
-      <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden/>
-    </v-toolbar-items>
-  </v-toolbar>
+  <div>
+    <v-toolbar class="header-toolbar" dense fixed app>
+      <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
+      <img src="../../assets/logo.png" class="main-logo-toolbar" alt="logo Edimus"/>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-divider vertical></v-divider>
+
+        <v-btn
+          flat
+          @click="clearWorflow"
+        >
+          Clear Workflow
+        </v-btn>
+
+        <v-divider vertical></v-divider>
+
+        <v-btn
+          :disabled="displayLoader"
+          :loading="displayLoader"
+          @click="importYamlInput"
+          flat
+        >
+          Import YAML file
+        </v-btn>
+
+        <v-divider vertical></v-divider>
+
+        <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden/>
+      </v-toolbar-items>
+    </v-toolbar>
+    <v-dialog
+      v-model="displayLoader"
+      persistent
+      width="300"
+    >
+      <v-card>
+        <v-card-text>
+          Loading...
+          <v-progress-linear
+            indeterminate
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      v-model="displaySnackbar"
+      color="red darken-4"
+      top
+    >
+      Unable to load file
+      <v-btn
+        @click="displaySnackbar = false"
+        icon
+        left
+      >
+        <v-icon>close</v-icon>
+      </v-btn>
+    </v-snackbar>
+  </div>
 </template>
 
 <script>
@@ -23,6 +74,12 @@ function getBlockType(word) {
 export default {
   name: 'ZHeaderToolbar',
   inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService', 'fileService'],
+  data() {
+    return {
+      displayLoader: false,
+      displaySnackbar: false,
+    };
+  },
   methods: {
     switchDrawer() {
       this.stateService.setDrawerOpen(!this.stateService.currentNavigatorState.drawer);
@@ -37,6 +94,7 @@ export default {
     },
 
     importYaml(ev) {
+      this.displayLoader = true;
       const { currentWorkflow } = this.stateService;
       const blockMap = {};
       let yamlToJson = '';
@@ -97,7 +155,11 @@ export default {
               }
             });
           });
+          this.displayLoader = false;
         });
+      }).catch(() => {
+        this.displayLoader = false;
+        this.displaySnackbar = true;
       });
     },
   },
