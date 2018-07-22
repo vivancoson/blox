@@ -1,7 +1,7 @@
 <template>
   <drag class="drag" :transfer-data="dragData">
     <v-tooltip right>
-      <v-card ref="drag" v-bind:class="def.color" class="pa-2 ma-2 elevation-9" slot="activator">
+      <v-card ref="drag" v-bind:class="def.color" class="sideboard-block pa-2 ma-2 elevation-9" slot="activator">
         <div class="caption">{{def.name}}</div>
       </v-card>
       <span>{{def.description || def.clazz}}</span>

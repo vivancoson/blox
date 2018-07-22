@@ -11,7 +11,7 @@
           flat
           @click="clearWorflow"
         >
-          Clear Workflow
+          clear workflow
         </v-btn>
 
         <v-divider vertical></v-divider>
@@ -22,7 +22,7 @@
           @click="importYamlInput"
           flat
         >
-          Import YAML file
+          import yaml file
         </v-btn>
 
         <v-divider vertical></v-divider>
