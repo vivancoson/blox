@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 import _ from 'lodash';
 import Block from '../../models/block';
 
@@ -73,7 +74,7 @@ function getBlockType(word) {
 
 export default {
   name: 'ZHeaderToolbar',
-  inject: ['workflowService', 'uuidService', 'generatorService', 'stateService', 'jsPlumbService', 'fileService'],
+  inject: ['uuidService', 'generatorService', 'jsPlumbService', 'fileService'],
   data() {
     return {
       displayLoader: false,
@@ -82,20 +83,18 @@ export default {
   },
   methods: {
     switchDrawer() {
-      this.stateService.setDrawerOpen(!this.stateService.currentNavigatorState.drawer);
+      this.switchsidePanelOpen();
     },
 
     clearWorflow() {
-      this.stateService.currentWorkflow.clear();
-      this.jsPlumbService.clearWorkflow(this.stateService.currentWorkflow);
+      this.clearAllBlockInWorkflow();
+      this.jsPlumbService.clearWorkflow();
     },
     importYamlInput() {
       this.$refs.fileElement.click();
     },
-
     importYaml(ev) {
       this.displayLoader = true;
-      const { currentWorkflow } = this.stateService;
       const blockMap = {};
       let yamlToJson = '';
       const promises = this.fileService.readFiles(ev.target.files);
@@ -140,17 +139,17 @@ export default {
               id: blockId,
               source: value.source,
             };
-            this.workflowService.addBlockToWorkflow(currentWorkflow, block);
+            this.addBlockToWorkflow(block);
           });
           positionX += 250;
           positionY = 230;
         });
         this.$nextTick(() => {
-          this.jsPlumbService.batch(currentWorkflow, () => {
+          this.jsPlumbService.batch(() => {
             _.forIn(blockMap, (value) => {
               if (value.source) {
                 value.source.forEach((e) => {
-                  this.jsPlumbService.connect(currentWorkflow, blockMap[e].id, value.id);
+                  this.jsPlumbService.connect(blockMap[e].id, value.id);
                 });
               }
             });
@@ -162,6 +161,11 @@ export default {
         this.displaySnackbar = true;
       });
     },
+    ...mapMutations([
+      'addBlockToWorkflow',
+      'clearAllBlockInWorkflow',
+      'switchsidePanelOpen',
+    ]),
   },
 };
 </script>

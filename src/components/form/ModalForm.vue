@@ -1,6 +1,6 @@
 <template>
   <v-layout row justify-center>
-    <v-dialog v-model="form.state" max-width="600">
+    <v-dialog v-model="modalFormOpen" max-width="600">
       <v-card>
         <v-card-title>
           <span class="headline">{{blockCopy.clazz}}</span>
@@ -53,37 +53,46 @@
 </template>
 
 <script>
-
-import _ from 'lodash';
+import { mapMutations, mapState } from 'vuex';
+import { cloneDeep } from 'lodash';
 
 export default {
   name: 'ZModalForm',
-  inject: ['stateService'],
   data() {
     return {
       valid: false,
-      workflow: this.stateService.state.workflow,
-      form: this.stateService.state.form,
     };
   },
   computed: {
     blockCopy() {
-      return _.cloneDeep(this.workflow.currentBlock);
+      return cloneDeep(this.currentBlock);
     },
+    modalFormOpen: {
+      get() {
+        return this.$store.state.modalFormOpen;
+      },
+      set() {
+        this.setModalFormOpen(false);
+      },
+    },
+    ...mapState([
+      'currentBlock',
+    ]),
   },
   methods: {
     close() {
-      this.stateService.setFormState(false);
+      this.setModalFormOpen(false);
     },
     save() {
       if (this.$refs.formCustomBlock.validate()) {
-        this.workflow.currentBlock.name = this.blockCopy.name;
-        _.forOwn(this.blockCopy.fields, (value, key) => {
-          this.workflow.currentBlock.fields[key] = value;
-        });
-        this.stateService.setFormState(false);
+        this.changeCurrentBlockFields(this.blockCopy);
+        this.setModalFormOpen(false);
       }
     },
+    ...mapMutations([
+      'setModalFormOpen',
+      'changeCurrentBlockFields',
+    ]),
   },
   filters: {
     capitalize(value) {

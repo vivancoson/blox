@@ -10,19 +10,19 @@ export default class GeneratorService {
     loadLanguages(prismyaml);
   }
 
-  generate(workflow, connections) {
+  generate(blockInWorkflow, connections) {
     const connectionsByTarget = _.groupBy(connections, 'targetId');
     const result = {};
-    const blocks = workflow.blocks || [];
-    blocks.forEach((value) => {
-      const source = _.chain(connectionsByTarget[value.id] || [])
-        .map(connection => workflow.getBlock(connection.sourceId).name)
+    blockInWorkflow.forEach((block) => {
+      const source = _.chain(connectionsByTarget[block.id] || [])
+        .map(connection =>
+          blockInWorkflow.filter(b => b.id === connection.sourceId)[0].name)
         .uniq()
         .sort()
         .value();
-      const name = value.name;
-      const config = value.fields;
-      const clazz = value.clazz;
+      const name = block.name;
+      const config = block.fields;
+      const clazz = block.clazz;
       result[name] = {
         class: clazz,
       };

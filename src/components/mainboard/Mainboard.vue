@@ -1,48 +1,43 @@
 <template>
-  <drop id="container" class="drop mainboard" @drop="handleDrop">
-    <z-main-block v-bind:id="block.id" v-for="block in blocks" v-bind:block="block" v-bind:key="block.id">
-    </z-main-block>
+  <drop
+    id="container"
+    class="drop mainboard"
+    @drop="handleDrop"
+  >
+    <z-main-block
+    v-for="block in blockInWorkflow"
+    :id="block.id"
+    :key="block.id"
+    :block="block"
+    ></z-main-block>
   </drop>
 </template>
 
 <script>
-
+import { mapMutations, mapState } from 'vuex';
 import _ from 'lodash';
 import ZMainBlock from './MainboardBlock.vue';
 import Block from '../../models/block';
-import Workflow from '../../models/workflow';
 
 export default {
   name: 'ZMainBoard',
-  inject: ['workflowService', 'uuidService', 'nameService', 'stateService', 'jsPlumbService', 'blockService'],
+  inject: ['uuidService', 'jsPlumbService', 'blockService'],
   components: { ZMainBlock },
-  data() {
-    return {
-      blocks: [],
-    };
-  },
+  computed: mapState([
+    'blockInWorkflow',
+  ]),
   methods: {
     handleDrop(data, event) {
       if (data) {
         const def = data.def;
         const block = new Block(this.uuidService.uuid(), `${def.name}Block`, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions);
         block.setPosition(event.offsetX - 90, event.offsetY - 75);
-        this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block);
-        this.stateService.setViewerDirty(true);
+        this.addBlockToWorkflow(block);
       }
     },
-  },
-  created() {
-    const workflow = new Workflow(this.uuidService.uuid());
-    this.workflowService.addWorkflow({
-      workflow,
-      links: [],
-    });
-    this.stateService.setCurrentWorkflow(workflow);
-    this.blocks = workflow.blocks;
-    this.jsPlumbService.listenToConnectionChanges(workflow, () => {
-      this.stateService.setViewerDirty(true);
-    });
+    ...mapMutations([
+      'addBlockToWorkflow',
+    ]),
   },
 };
 </script>

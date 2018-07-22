@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'ZViewer',
-  inject: ['stateService', 'generatorService', 'jsPlumbService'],
+  inject: ['generatorService', 'jsPlumbService'],
   computed: {
     yamlForHTML() {
       return this.generatorService.generateYamlViewerHTML(this.generateYaml());
@@ -40,6 +40,9 @@ export default {
         this.setViewerOpen(false);
       },
     },
+    ...mapState([
+      'blockInWorkflow',
+    ]),
   },
   watch: {
     yamlForHTML() {
@@ -55,8 +58,8 @@ export default {
     },
     generateYaml() {
       return this.generatorService.generate(
-        this.stateService.currentWorkflow,
-        this.jsPlumbService.getAllConnections(this.stateService.currentWorkflow),
+        this.blockInWorkflow,
+        this.jsPlumbService.getAllConnections(),
       );
     },
     downloadYaml() {
@@ -82,6 +85,9 @@ export default {
       'switchViewerOpen',
       'setViewerOpen',
     ]),
+  },
+  created() {
+    this.jsPlumbService.listenToConnectionChanges(() => this.generateYaml());
   },
 };
 </script>

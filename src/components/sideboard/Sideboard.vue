@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer hide-overlay stateless width="200" v-model="navigator.drawer" app>
+  <v-navigation-drawer hide-overlay stateless width="200" v-model="sidePanelOpen" app>
     <v-layout row align-center>
       <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 py-1" hide-details></v-text-field>
     </v-layout>
@@ -17,11 +17,11 @@ import ZCustomBlock from './CustomBlock.vue';
 
 export default {
   name: 'ZSideboard',
-  inject: ['blockService', 'stateService'],
+  components: { ZSideboardBlock, ZCustomBlock },
+  inject: ['blockService'],
   data() {
     return {
       blockList: [],
-      navigator: this.stateService.currentNavigatorState,
       searchInput: '',
     };
   },
@@ -29,11 +29,16 @@ export default {
     filteredBlockList() {
       return this.blockList.filter(e => e.name.toLowerCase().includes(this.searchInput.toLowerCase()));
     },
+    sidePanelOpen: {
+      get() {
+        return this.$store.state.sidePanelOpen;
+      },
+      set() {},
+    },
   },
   created() {
     this.blockService.getDefinitions().then((res) => { this.blockList = res; });
   },
-  components: { ZSideboardBlock, ZCustomBlock },
 };
 </script>
 

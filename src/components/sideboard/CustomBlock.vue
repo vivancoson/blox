@@ -87,7 +87,7 @@ import Block from '../../models/block';
 
 export default {
   name: 'ZCustomBlock',
-  inject: ['workflowService', 'uuidService', 'stateService', 'jsPlumbService'],
+  inject: ['uuidService', 'jsPlumbService'],
   data() {
     return {
       showDialog: false,
@@ -115,8 +115,6 @@ export default {
         });
         const block = new Block(this.uuidService.uuid(), this.blockName, this.blockType, this.blockClazz, _.cloneDeep(config));
         block.setPosition(400, 400);
-        this.workflowService.addBlockToWorkflow(this.stateService.currentWorkflow, block);
-        this.stateService.setViewerDirty(true);
         this.clearCustomBlockForm();
       }
     },

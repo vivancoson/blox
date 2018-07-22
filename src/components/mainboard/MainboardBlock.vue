@@ -1,7 +1,7 @@
 <template>
   <v-layout :style="blockPosition" class="mainboard-block elevation-10">
     <v-flex>
-      <v-card :class="color" class="mainboard-block--size">
+      <v-card :class="color" class="mainboard-block--size" @drop="alert(1)">
         <v-card-title>
           <div class="body-2 mainboard-block--text" :title=block.name>{{block.name}}</div>
           <span class="body-1 mainboard-block--text" :title=getClassName>{{getClassName}}</span>
@@ -45,12 +45,12 @@
 </template>
 
 <script>
-
+import { mapMutations } from 'vuex';
 import constants from '../../constants/constants';
 
 export default {
   name: 'ZMainBlock',
-  inject: ['stateService', 'workflowService', 'jsPlumbService'],
+  inject: ['jsPlumbService'],
   data: () => ({
     showConfig: false,
     blockPosition: {
@@ -68,26 +68,29 @@ export default {
   },
   methods: {
     removeBlock() {
-      const currentWorkflow = this.stateService.currentWorkflow;
-      this.jsPlumbService.removeConnections(currentWorkflow, this.block);
-      this.workflowService.removeBlockFromWorkflow(currentWorkflow, this.block);
+      this.jsPlumbService.removeConnections(this.block);
+      this.removeBlockInWorkflow(this.block);
     },
     selectBlock() {
-      this.stateService.setCurrentBlock({});
-      this.stateService.setCurrentBlock(this.block);
-      this.stateService.setFormState(true);
+      this.setCurrentBlock(this.block);
+      this.setModalFormOpen(true);
     },
     setBlockPosition(left, top) {
       this.blockPosition.left = `${left}px`;
       this.blockPosition.top = `${top}px`;
     },
+    ...mapMutations([
+      'removeBlockInWorkflow',
+      'setCurrentBlock',
+      'setModalFormOpen',
+    ]),
   },
   beforeMount() {
     this.setBlockPosition(this.block.positionX, this.block.positionY);
   },
   mounted() {
     this.$nextTick(() => {
-      this.jsPlumbService.initiateBlock(this.stateService.currentWorkflow, this.block, ({ pos }) => {
+      this.jsPlumbService.initiateBlock(this.block, ({ pos }) => {
         this.block.setPosition(pos[0], pos[1]);
       });
     });

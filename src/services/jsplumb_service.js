@@ -1,9 +1,9 @@
 import { jsPlumb } from 'jsplumb';
-import _ from 'lodash';
 import constants from '../constants/constants';
 
 export default class JsPlumbService {
-  instances = {};
+  instance = null;
+  hasListener = false;
   createInstance() {
     return jsPlumb.getInstance({
       Container: 'container',
@@ -24,51 +24,47 @@ export default class JsPlumbService {
     });
   }
 
-  getInstance(workflow) {
-    if (!this.instances[workflow.id]) {
-      this.instances[workflow.id] = {
-        instance: this.createInstance(),
-        hasListener: false,
-      };
+  getInstance() {
+    if (this.instance === null) {
+      this.instance = this.createInstance();
     }
-    return this.instances[workflow.id];
+    return this.instance;
   }
 
-  getAllConnections(workflow) {
-    return this.getInstance(workflow).instance.getAllConnections();
-  }
-
-  repaintEverything(workflow) {
-    this.getInstance(workflow).instance.repaintEverything();
-  }
-
-  listenToConnectionChanges(workflow, handler) {
-    const instance = this.getInstance(workflow);
-    if (!instance.hasListener) {
-      _.forOwn(constants.connectionEvents, (value) => {
-        instance.instance.bind(value, handler);
-      });
-      instance.hasListener = true;
+  listenToConnectionChanges(handler) {
+    if (this.hasListener === false) {
+      for (const value in constants.connectionEvents) {
+        this.instance.bind(value, handler);
+        this.hasListener = true;
+      }
     }
   }
 
-  removeConnections(workflow, block) {
-    this.getInstance(workflow).instance.remove(block.id);
+  getAllConnections() {
+    return this.getInstance().getAllConnections();
   }
 
-  clearWorkflow(workflow) {
-    this.getInstance(workflow).instance.deleteEveryEndpoint();
+  repaintEverything() {
+    this.getInstance().repaintEverything();
   }
 
-  connect(workflow, sourceId, targetId) {
-    this.getInstance(workflow).instance.connect({
+  removeConnections(block) {
+    this.instance.remove(block.id);
+  }
+
+  clearWorkflow() {
+    this.getInstance().deleteEveryEndpoint();
+  }
+
+  connect(sourceId, targetId) {
+    this.getInstance().connect({
       source: sourceId,
       target: targetId,
     });
   }
 
-  initiateBlock(workflow, block, drag) {
-    const instance = this.getInstance(workflow).instance;
+  initiateBlock(block, drag) {
+    const instance = this.getInstance();
     instance.draggable(block.id, {
       containment: 'true',
       drag,
@@ -84,12 +80,12 @@ export default class JsPlumbService {
     if (block.type !== constants.blockTypes.input.value) {
       instance.makeTarget(block.id, {
         allowLoopback: false,
-        maxConnections: -1,
       });
     }
   }
-  batch(workflow, batch) {
-    const instance = this.getInstance(workflow).instance;
+
+  batch(batch) {
+    const instance = this.getInstance();
     instance.batch(batch);
   }
 }
