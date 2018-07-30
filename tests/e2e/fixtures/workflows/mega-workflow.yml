@@ -1,0 +1,1359 @@
+####
+## Construct MOE object "Compte de Facturation"
+####
+
+## Object
+
+# Transforme les données de la table de travail "Compte Cloe" pour la table finale
+CompteFacturationTdtCompteCloe_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+    mapper: compte_facturation-from-compte_cloe.json
+  source:
+    - TdtCompteCloe_Selector
+
+# Transforme les données de la table de travail "Mandat" pour la table finale
+CompteFacturationTdtMandat_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+      and /cpt/_ = true()
+      and hbase:has($hbase, /TdtMandat, 'd', 'IdMandat')
+    mapper: compte_facturation-from-mandat.json
+  source:
+    - TdtCompteCloeFromLink_Selector
+
+# Transforme les données de la table de travail "Compte Felix" pour la table finale
+CompteFacturationTdtCompteFelix_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+      and /cpt/_ = true()
+      and hbase:has($hbase, /TdtCompteFelix, 'd', 'IdFelix')
+    mapper: compte_facturation-from-compte_felix.json
+  source:
+    - TdtCompteCloeFromLink_Selector
+
+## Links
+
+# Transforme les données de la table de travail "Adresse" pour la table finale
+CompteFacturationLinkTdtAdresse_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+      and hbase:has($hbase, /TdtAdresse, 'd', 'IdAdresse')
+    mapper: compte_facturation-link-from-adresse.json
+  source:
+    - TdtCompteCloeFromLink_Selector
+
+# Transforme les données de la table de travail "Personne" pour la table finale
+CompteFacturationLinkTdtPersonne_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+      and hbase:has($hbase, /TdtPersonne, 'd', 'IdPersonne')
+      and hbase:get($hbase, /TdtPersonne, 'd', 'tInterlocuteur') = true()
+    mapper: compte_facturation-link-from-personne.json
+  source:
+    - TdtCompteCloeFromLink_Selector
+
+# Sens Demande <> Interlocuteur
+AddLinkInterlocuteurInDemande_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: insert_link_icl_in_demande.json
+  source:
+    - TdtDemandeInterlocuteur_HBaseFlattenLink
+
+# Sens Interlocuteur <> Demande
+AddLinkDemandeInInterlocuteur_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: insert_link_demande_in_icl.json
+  source:
+    - TdtDemandeInterlocuteur_HBaseFlattenLink
+
+
+Event_InterlocuteurInDemande_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_icl_in_dem.json
+  source:
+    - TdtDemandeInterlocuteur_HBaseFlattenLink
+
+Event_DemandeInInterlocuteur_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_dem_in_icl.json
+  source:
+    - TdtDemandeInterlocuteur_HBaseFlattenLink
+
+####
+## Recherche des lignes dans la table de travail Demande
+####
+
+TdtDemande_GetMiddleware:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtdemande}
+    field: /id
+    target: result
+  source:
+    - MajTdtDemande_Filter
+
+####
+## Filtrage du résultat
+####
+
+MajDemande_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: >
+      hbase:has($hbase, /result, 'd','RefAffaire')
+      and (hbase:has($hbase, /result, 'd','DateButoir') or hbase:has($hbase, /result, 'd','DateButoirTheorique'))
+  source:
+    - TdtDemande_GetMiddleware
+
+####
+## Mappings
+####
+
+TdtDemandeToDemande_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_tdt_Demande_to_Demande.json
+  source:
+    - MajDemande_Filter
+
+TdtDemandeToKafkaOuput_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_tdt_Demande_to_KafkaOutput.json
+  source:
+    - MajDemande_Filter
+
+####
+## Construct links to MOE object "Compte de Facturation"
+####
+
+## Links
+
+# Transforme les données de la table de travail "Compte Cloe" pour la table finale
+InterlocuteurClientLinkTdtCompteCloe_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      hbase:get($hbase, /TdtPersonne, 'd', 'tInterlocuteur') = true()
+      and hbase:has($hbase, /TdtCompteCloe, 'd', 'IdCompteCloe')
+      and hbase:get($hbase, /TdtCompteCloe, 'd', 'tPF') = true()
+      and not(null:isNullValue($null, hbase:get($hbase, /TdtCompteCloe, 'd', 'IdConvention')))
+    mapper: interlocuteur_client-link-from-compte_cloe.json
+  source:
+    - TdtPersonneFromLink_Selector
+
+##############################################################
+# Génération InterlocuteurClient suite aux évènements suivants :
+# - changement responsabilite
+# - changement adresse
+# - changement affectant la colonne Login (EspaceMembre, Email ou UsrLogin)
+#
+
+# Génération InterlocuteurClient après changement de resposabilité
+Map_tdt_ResponsabiliteToInterlocuteurClient:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: /flux = 'S_CONTACT' and hbase:get($hbase, /rsGetTdt_Responsabilite, 'd', 'Name')!= ''
+    mapper: mapper_tdt_Responsabilite_interlocuteurclient.json
+  source:
+    - GetTdt_Responsabilite_S_CONTACT
+
+# Génération InterlocuteurClient après changement d'adresse
+Map_tdt_AdresseToInterlocuteurClient:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_tdt_adresse_interlocuteurclient.json
+  source:
+    - GetTdt_Adresse_S_CONTACT
+
+# Génération InterlocuteurClient après changement affectant le login
+Map_InterlocuteurClientToNewLogin:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_interlocuteur_newLogin.json
+  source:
+    - GetInterlocuteurClient_CalculLogin
+
+Map_NewLoginToInterlocuteurClient:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  cache: true
+  config:
+    filter: ( /data/NewLogin != /data/OldLogin )
+    mapper: mapper_newLogin_to_interlocuteur.json
+  source:
+    - Map_InterlocuteurClientToNewLogin
+
+Map_InterlocuteurClientToKafkaOuput:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_InterlocuteurClient_to_KafkaOutput.json
+  source:
+    - Map_tdt_ResponsabiliteToInterlocuteurClient
+    - Map_tdt_AdresseToInterlocuteurClient
+    - Map_NewLoginToInterlocuteurClient
+
+PropositionCommerciale_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: proposition_commerciale.json
+  source:
+    - PropositionCommerciale_Selector
+
+#Vérifier que le JDD représente bien logiquement un PE
+#23/01/2018 : Controle sur le Type d'opération pour exclure les delete
+PointEnergieTdtCompteCloe_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: point_energie-from-compte_cloe.json
+    filter: >
+      (hbase:get($hbase, /TdtCompteCloe, 'd', 'tNiveau') = 'Mono PDS' or hbase:get($hbase, /TdtCompteCloe, 'd', 'tNiveau') = 'PDS')
+      and /commande != 'D'
+  source:
+    - TdtCompteCloe_Selector
+
+#gestion de la suppresion via la commande 'D'
+PointEnergieDelete_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: point_energie-delete-from-compte_cloe.json
+    filter: >
+      (hbase:get($hbase, /TdtCompteCloe, 'd', 'tNiveau') = 'Mono PDS' or hbase:get($hbase, /TdtCompteCloe, 'd', 'tNiveau') = 'PDS')
+      and /commande = 'D'
+  source:
+    - TdtCompteCloe_Selector
+
+
+#recuperer les attributs du point Energie
+PointEnergie_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.pointenergie}
+    field: /IdPe
+    target: PointEnergie
+  source:
+    - PointEnergieTdtCompteCloe_Mapper
+
+# Dédoublonnage
+SinglePointEnergie_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+     filter: pointenergie:checkLevelPE($pointenergie,hbase:get($hbase, /PointEnergie, 'd','StatutPdsNO'),/tStatutPdsNO,hbase:get($hbase, /PointEnergie, 'd','tStatutPds'),/tStatutPds, hbase:get($hbase, /PointEnergie, 'd','tAncIdCloe'),/tAncIdCloe)
+  source:
+    - PointEnergie_Selector
+
+
+# Extraction des liens "AdressePrincipal" de la table de travail "Compte Cloe"
+TdtCompteCloeAdressePrincipal_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: /Liens
+    target: adrPrincipal
+    prefix: tAdrPrincipal
+  source:
+    - SinglePointEnergie_Selector
+
+PeAdresseLinks_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: pe-adresseLink-from-compte_cloe.json
+  source:
+    - TdtCompteCloeAdressePrincipal_Flatten
+
+AdressePeLinks_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: adresse-peLink-from-compte_cloe.json
+  source:
+    - TdtCompteCloeAdressePrincipal_Flatten
+
+# PointEnergie MOE
+PointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: point_energie.json
+  source:
+    - SinglePointEnergie_Selector
+
+# PointEnergie TdtCompteCloe
+TdtCompteCloePointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: tdt_compte_cloe-point_energie.json
+  source:
+    - SinglePointEnergie_Selector
+
+TdtCompteCloe_add_DevisMapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: >
+      /IdCompteCloe/_ = true()
+      and hbase:has($hbase, /tdtdeviscomptecloe, 'd', 'QuoteNum')
+      and (( (hbase:get($hbase, /tdtcomptecloe, 'd', 'DateEffetContrat')) < (hbase:get($hbase, /tdtdeviscomptecloe, 'd', 'DateEffetContrat'))  ) or (hbase:has($hbase, /tdtcomptecloe, 'd', 'DateEffetContrat') = false()))
+    mapper: insert_devis_in_tdt_compte_cloe.json
+  source:
+    - TdtCompteCloeToCompareDate_Selector
+# Envoi de l'event de modification de la table tdt_CompteCloe
+Event_TdtCompteCloe_DevisMapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_maj_tdtcomptecloe_by_tdtdeviscomptecloe.json
+  source:
+    - TdtCompteCloeDevis_HBaseFlattenLink
+
+Event_PointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_pointenergie.json
+  source:
+    - TdtCompteCloe_Selector
+
+##############################
+# Filter StatutConsentement  #
+##############################
+ViePointEnergie_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /ViePointEnergie, 'd','StatutConsentement') = 'Actif'
+  source:
+    - GetViePointEnergie
+
+##############################
+# Filter Evenement           #
+##############################
+Evenement_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /ViePointEnergie, 'd','Evenement') = 'MES'
+  source:
+    - ViePointEnergie_Filter
+
+##############################
+# Get TABLE Contrat          #
+##############################
+GetContrat_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.contrat}
+    field: substring-before(hbase:get($hbase, /ViePointEnergie, 'd','IdViePointEnergie'), '||')
+    target: Contrat
+  source:
+    - Evenement_Filter
+
+##############################
+# Filter Evenement           #
+##############################
+TypeFourniture_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /Contrat, 'd','TypeFourniture') = 'Fourniture'
+  source:
+    - GetContrat_Selector
+
+#################################
+# Récupérations des liens  EJ   #
+################################
+GetLinkEJ_Contrat:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /Contrat, 'l')
+    target: Contrat_EJ
+    prefix: EJ
+  source:
+    - TypeFourniture_Filter
+
+################
+# Get EJ       #
+###############
+GetEJ_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.entitejuridique}
+    field: /Contrat_EJ/_0
+    target: EJ
+  source:
+    - GetLinkEJ_Contrat
+
+##############################
+# Get TABLE tdt Compte Cloe  #
+##############################
+GettdtCompteCloe_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+    field: hbase:get($hbase, /ViePointEnergie, 'd', 'IdCompteDesserviCloe')
+    target: tdtCompteCloe
+  source:
+    - GetEJ_Selector
+
+##############################
+# Get TABLE Point Energie    #
+##############################
+GetPointEnergie_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.pointenergie}
+    field: hbase:get($hbase, /tdtCompteCloe, 'd', 'IdPe')
+    target: PointEnergie
+  source:
+    - GettdtCompteCloe_Selector
+
+#################################
+# Récupérations des liens  ICL  #
+################################
+GetLinkICL_Contrat:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /Contrat, 'l')
+    target: Contrat_ICL
+    prefix: Icl
+  source:
+    - GetPointEnergie_Selector
+
+################
+# Get ICL      #
+###############
+GetICL_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.interlocuteurclient}
+    field: /Contrat_ICL/_0
+    target: ICL
+  source:
+    - GetLinkICL_Contrat
+
+##############################
+# Get TABLE Adresse          #
+##############################
+GetAdresse_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.adresse}
+    field: hbase:get($hbase, /ICL, 'd', 'IdAdresse')
+    target: Adresse
+  source:
+    - GetICL_Selector
+
+#################################
+# Récupérations des liens  Site #
+################################
+GetLinkSite_Adr:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /Adresse, 'l')
+    target: Site_Adr
+    prefix: Sit
+  source:
+    - GetAdresse_Selector
+
+################
+# Get Site     #
+###############
+GetSites_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.site}
+    field: /Site_Adr/_0
+    target: Site
+  source:
+      - GetLinkSite_Adr
+
+##############################
+# Filter Evenement   C5      #
+##############################
+TypeSegmentC5_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /PointEnergie, 'd','SegmentOR') = 'C5'
+  source:
+    - GetSites_Selector
+
+##############################
+# Filter Evenement   C2C4    #
+##############################
+TypeSegmentC2C4_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: (hbase:get($hbase, /PointEnergie, 'd','SegmentOR') = 'C2') or (hbase:get($hbase, /PointEnergie, 'd','SegmentOR') = 'C4')
+  source:
+    - GetSites_Selector
+
+##################################
+# Mapper Demande Prestation C2C4 #
+#################################
+DemandePrestationC2C4_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: demandePrestationc2c4.json
+  source:
+    - TypeSegmentC2C4_Filter
+
+################################
+# Mapper Demande Prestation C5 #
+###############################
+DemandePrestationC5_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: demandePrestationc5.json
+  source:
+    - TypeSegmentC5_Filter
+
+##############################
+# Get TABLE TRAVAIL CONTRAT  #
+##############################
+TdtViePointEnergie1_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcontrat}
+    field: hbase:get($hbase, /TdtViePointEnergie, 'd','RowIdContrat')
+    target: TdtContrat
+  source:
+    - TdtViePointEnergie_Selector
+ 
+##############################
+# Get TABLE TRAVAIL COMPTE   #
+##############################
+TdtViePointEnergie2_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+    field: hbase:get($hbase, /TdtViePointEnergie, 'd','IdCompteDesserviCloe')
+    target: TdtCompteCloe
+  source:
+    - TdtViePointEnergie1_Selector
+
+###################################
+# Get TABLE TRAVAIL VPE Ingestion #
+###################################
+TdtViePointEnergie3_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtvpe}
+    field: concat( hbase:get($hbase, /TdtViePointEnergie, 'd','RowIdContrat'),'||',hbase:get($hbase, /TdtViePointEnergie, 'd','IdCompteDesserviCloe'),'||',hbase:get($hbase, /TdtViePointEnergie, 'd','VersionVieDuPe'))
+    target: TdtVpeIngestion
+  source:
+    - TdtViePointEnergie2_Selector
+#######################################
+# Get TABLE TRAVAIL VPE Historisation #
+#######################################
+TdtViePointEnergie4_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtvpe}
+    field: concat( hbase:get($hbase, /TdtContrat, 'd','IdContrat'),'||',hbase:get($hbase, /TdtCompteCloe, 'd','IdPe'))
+    target: TdtVpeHistorique
+  source:
+    - TdtViePointEnergie3_Selector
+
+
+###################################
+# Get TABLE TRAVAIL VPE #
+###################################
+TdtViePointEnergie5_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtvpe}
+    field: /vpe/_0
+    target: Vpe
+  source:
+    - ContratVPE_Flatten_filter
+
+
+##############################
+# Get TABLE CONTRAT          #
+##############################
+TdtViePointEnergieAll_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.contrat}
+    field: hbase:get($hbase, /TdtContrat, 'd','IdContrat')
+    target: Contrat
+  source:
+    - TdtViePointEnergie4_Selector
+
+##############################
+# Filter Quote_num IdPe null #
+##############################
+TdtViePointEnergieAll_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: >
+      hbase:has($hbase, /TdtContrat, 'd','IdContrat')
+      and hbase:has($hbase, /TdtCompteCloe, 'd','IdPe')
+      and hbase:has($hbase, /TdtContrat, 'd','VersionContrat')
+  source:
+    - TdtViePointEnergieAll_Selector
+
+##############################
+# Filter rejets              #
+##############################
+
+TdtViePointEnergieRejets_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: >
+      (hbase:has($hbase, /TdtCompteCloe, 'd','IdPe') and core:containsRegex($core, hbase:get($hbase, /TdtCompteCloe, 'd','IdPe'), '1-'))
+      or not(hbase:has($hbase, /TdtCompteCloe, 'd','IdPe'))
+      or not(hbase:has($hbase, /TdtContrat, 'd','VersionContrat'))
+  source:
+    - TdtViePointEnergieAll_Selector
+
+
+##############################
+# MAPPINGS                   #
+##############################
+ViePointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: vie_point_energie-from-tdt_vie_point_energie.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+PointEnergieTDTVPE_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: point_energie-from-tdt_vie_point_energie.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+ContratTdtViePointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: contrat-from-tdt_vie_point_energie.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+TdtViePointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: tdt_vie_point_energie-from-tdt_vie_point_energie.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+Events_ViePointEnergie_TdtDemandePrestationMapper:
+  log: Events_ViePointEnergie
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_vie_point_energie.json
+  source:
+    - TdtViePointEnergie_Mapper
+
+DeleteRejetsViePointEnergie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: ( /commande = 'traite_rejet' )
+    mapper: delete_rejets_vie_point_energie.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+ViePointEnergie_StatutVPE_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: vie_point_energie-from-contrat.json
+  source:
+    - TdtViePointEnergie5_Selector
+
+EventViePointEnergieMapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: event_vie_point_energie-from-tdt-vpe.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+EventViePointEnergieForElasticMapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: events_vpe_for_elastic.json
+  source:
+    - TdtViePointEnergieAll_Filter
+
+RejetViePointEnergieMapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: rejets_vie_point_energie-from-tdt_vpe.json
+  source:
+    - TdtViePointEnergieRejets_Filter
+
+####
+## Get temporary object from event ID
+####
+
+## Table du MOE "Proposition Commerciale"
+# Récupération de la table de travail "Proposition Commerciale"
+PropositionCommerciale_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.proposition_commerciale}
+    field: /id
+    target: PropositionCommerciale
+  source:
+    - MajPropositionCommerciale_Filter
+
+## Table de travail "Adresse"
+# Récupération de la table de travail "Adresse"
+TdtAdresse_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtadresse}
+    field: /id
+    target: TdtAdresse
+  source:
+    - MajTdtAdresse_Filter
+
+# Extraction des liens "Compte Cloe" de la table de travail "Adresse"
+TdtAdresseCompteCloe_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtAdresse, 'l')
+    target: cpt
+    prefix: Cpt
+  source:
+    - TdtAdresse_Selector
+
+## Table de travail "Compte Cloe"
+# Récupération de la table de travail "Compte Cloe"
+TdtCompteCloe_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+    field: /id
+    target: TdtCompteCloe
+  source:
+    - MajTdtCompteCloe_Filter
+
+# Extraction des liens "Personne" de la table de travail "Compte Cloe"
+TdtCompteCloePersonne_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtCompteCloe, 'l')
+    target: pers
+    prefix: Pers
+  source:
+    - TdtCompteCloe_Selector
+
+
+# Récupération de la table de travail "Compte Cloe" référencée par un lien
+TdtCompteCloeFromLink_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+    field: /cpt/_0
+    target: TdtCompteCloe
+  source:
+    - TdtAdresseCompteCloe_Flatten
+    - TdtCompteFelixCompteCloe_Flatten
+    - TdtMandatCompteCloe_Flatten
+    - TdtPersonneCompteCloe_Flatten
+
+# Re-émission du message si la ROWKEY n'est pas trouvé dans la table de travail "Compte Cloe"
+FakeEventTdtCompteCloeFromLink_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: hbase:isEmpty($hbase, /TdtCompteCloe)
+    mapper: event_retry.json
+  source:
+    - TdtCompteCloeFromLink_Selector
+
+## Table de travail "Mandat"
+# Récupération de la table de travail "Mandat"
+TdtMandat_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtmandat}
+    field: /id
+    target: TdtMandat
+  source:
+    - MajTdtMandat_Filter
+
+# Extraction des liens "Compte Cloe" de la table de travail "Mandat"
+TdtMandatCompteCloe_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtMandat, 'l')
+    target: cpt
+    prefix: Cpt
+  source:
+    - TdtMandat_Selector
+
+## Table de travail "Compte Felix"
+# Récupération de la table de travail "Compte Felix"
+TdtCompteFelix_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptefelix}
+    field: /id
+    target: TdtCompteFelix
+  source:
+    - MajTdtCompteFelix_Filter
+
+# Extraction des liens "Compte Cloe" de la table de travail "Compte Felix"
+TdtCompteFelixCompteCloe_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtCompteFelix, 'l')
+    target: cpt
+    prefix: Cpt
+  source:
+    - TdtCompteFelix_Selector
+
+## Table de travail "Personne"
+# Récupération de la table de travail "Personne"
+TdtPersonne_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtpersonne}
+    field: /id
+    target: TdtPersonne
+  source:
+    - MajTdtPersonne_Filter
+
+# Extraction des liens "Compte Cloe" de la table de travail "Personne"
+TdtPersonneCompteCloe_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtPersonne, 'l')
+    target: cpt
+    prefix: Cpt
+  source:
+    - TdtPersonne_Selector
+
+# Récupération de la table de travail "Compte Cloe" référencée par un lien
+TdtPersonneFromLink_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtpersonne}
+    field: /pers/_0
+    target: TdtPersonne
+  source:
+    - TdtCompteCloePersonne_Flatten
+
+# Re-émission du message si la ROWKEY n'est pas trouvé dans la table de travail "Personne"
+FakeEventTdtPersonneFromLink_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    filter: hbase:isEmpty($hbase, /TdtPersonne)
+    mapper: event_retry.json
+  source:
+    - TdtPersonneFromLink_Selector
+
+## Table de travail "ViePointEnergie"
+# Récupération de la table de travail "ViePointEnergie"
+TdtViePointEnergie_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtvpe}
+    field: /id
+    target: TdtViePointEnergie
+  source:
+    - MajTdtViePointEnergie_Filter
+
+############## GETs pour InterlocuteurClient ####################
+#recuperer les attributs de la tdt_Resp venant de S_CONTACT
+GetTdt_Responsabilite_S_CONTACT:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtresponsabilite}
+    field: /data/d/idResponsabilite
+    target: rsGetTdt_Responsabilite
+  source:
+    - FilterInterlocuteurClient_s_contact_tdt_Responsabilite
+
+# Récupérer les attributs de TDT_ADRESSE venant de S_CONTACT
+GetTdt_Adresse_S_CONTACT:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtadresse}
+    field: /data/d/idAdresse
+    target: rsGetTdt_ADRESSE
+  source:
+    - FilterInterlocuteurClient_s_contact_tdt_adresse
+
+
+# Récupérer les attributs de Interlocuteur pour calculer le Login
+GetInterlocuteurClient_CalculLogin:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.interlocuteurclient}
+    field: /id
+    columns: d
+    target: rsGetIcl_Login
+  source:
+    - FilterInterlocuteurClient_CalculLogin
+
+
+# Récupération de la table "ViePointEnergie"
+GetViePointEnergie:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.vpe}
+    field: /event_data/id
+    columns: d
+    target: ViePointEnergie
+  source:
+    - FilterViePointEnergie_DemandePrestation
+
+## ZRA 19/01/2018
+# PointEnergie TdtDevisCompteCloe depuis S_DOC_QUOTE
+#recuperer les attributs de TdtDevisCompteCloe
+TdtDevisCompteCloe_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtdeviscomptecloe}
+    field: /id
+    target: tdtdeviscomptecloe
+  source:
+    - MajTdtDevisCompteCloe_Filter
+# Exclusion des devis ayant TypeContrat = Contrat services
+TdtCompteCloeDevis_FilterXPath:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /tdtdeviscomptecloe, 'd', 'TypeContrat') != 'Contrat services'
+  source:
+    - TdtDevisCompteCloe_Selector
+# Extraction des liens "Compte_" de la table de travail "Compte Cloe"
+TdtCompteCloeDevis_HBaseFlattenLink:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /tdtdeviscomptecloe, 'l')
+    target: IdCompteCloe
+    prefix: Compte
+  source:
+    - TdtCompteCloeDevis_FilterXPath
+#recuperer les attributs de TdtDevisCompteCloe
+TdtCompteCloeToCompareDate_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+    field: /IdCompteCloe/_0
+    target: tdtcomptecloe
+  source:
+    - TdtCompteCloeDevis_HBaseFlattenLink
+
+## Table  "Contrat"
+# Récupération de la table "Contrat"
+Contrat_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.contrat}
+    field: /id
+    target: Contrat
+  source:
+    - MajContrat_Filter
+
+ContratVPE_Flatten:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /Contrat, 'l')
+    target: vpe
+    prefix: Vpe
+  source:
+    - Contrat_Selector
+
+ContratVPE_Flatten_filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /vpe/_ = 'true'
+  source:
+    - ContratVPE_Flatten
+
+## Table de travail "DemandeInterlocuteur"################################################
+# Récupération de la table de travail ###################################################
+TdtDemandeInterlocuteur_Selector:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.hbase.HBaseGet
+  config:
+    table: ${hbase.table.tdtdemandeinterlocuteur}
+    field: /id
+    target: TdtDemandeInterlocuteur
+  source:
+    - MajTdtDemandeInterlocuteurClient_Filter
+
+# Verification de la présence de l'identifiant de l'interlocuteur
+TdtDemandeInterlocuteur_FilterXPath:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: hbase:get($hbase, /TdtDemandeInterlocuteur, 'd', 'IdInterlocuteur') != ''
+  source:
+    - TdtDemandeInterlocuteur_Selector
+# Extraction des liens "Compte_" de la table de travail "Compte Cloe"
+TdtDemandeInterlocuteur_HBaseFlattenLink:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.flatten.HBaseFlattenLink
+  config:
+    source: hbase:asDataNode($hbase, /TdtDemandeInterlocuteur, 'l')
+    target: DemIcl
+    prefix: Dem
+  source:
+    - TdtDemandeInterlocuteur_FilterXPath
+
+####
+## Inputs
+####
+# Consumming eDMA Events on Kafka
+Event_Input:
+  class: fr.edf.dco.edma.ece.sparktimus.input.kafka.SecuredKafkaInput
+  cache: true
+  config:
+    topic:  ${kafka.topic.input.events}
+    broker: ${kafka.broker}
+    reset:  ${kafka.reset}
+
+####
+## Filter command
+####
+MajPropositionCommerciale_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter:  /table = 'PropositionCommerciale'
+  source:
+    - Event_Input
+
+MajTdtAdresse_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_Adresse'
+  source:
+    - Event_Input
+
+MajTdtCompteCloe_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_CompteCloe'
+  source:
+    - Event_Input
+
+MajTdtCompteFelix_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_CompteFelix'
+  source:
+    - Event_Input
+
+MajTdtDemande_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /source = 'cloe' and /table = 'tdt_Demande' and (/flux = 'S_SRV_REQ1_FNX' or /flux = 'S_SRV_REQ') and ( /id != '' )
+  source:
+    - Event_Input
+
+MajTdtMandat_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_Mandat'
+  source:
+    - Event_Input
+
+MajTdtPersonne_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_Personne'
+  source:
+    - Event_Input
+
+MajTdtViePointEnergie_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_ViePointEnergie'
+  source:
+    - Event_Input
+
+###Filtre sur les objets pouvant affecter un InterlocuteurClient
+#S_CONTACT to TDT_S_Responsabilite
+# Note 19/12/2017 : S_RESP event excluded - updates to be managed by batch
+FilterInterlocuteurClient_s_contact_tdt_Responsabilite:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter:  /source = 'cloe' and /table = 'tdt_Responsabilite' and /flux = 'S_CONTACT'
+  source:
+    - Event_Input
+
+
+#S_CONTACT - MAJ Adresse
+FilterInterlocuteurClient_s_contact_tdt_adresse:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter:  /source = 'cloe' and /table = 'tdt_adresse' and /flux = 'S_CONTACT'
+  source:
+    - Event_Input
+
+# InterlocuteurClient - évènements pouvant déboucher sur une mise à jour du Login
+FilterInterlocuteurClient_CalculLogin:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter:  /source = 'cloe' and /table = 'InterlocuteurClient' and (/flux = 'S_CONTACT' or /flux = 'S_CONTACT_X' or /flux = 'S_USER')
+  source:
+    - Event_Input
+
+# DemandePrestation
+FilterViePointEnergie_DemandePrestation:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /event_data/table = 'ViePointEnergie'
+  source:
+      - Event_Input
+
+# PointEnergie - évènements pour l'attribut IdContratFourniture
+MajTdtDevisCompteCloe_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'tdt_DevisCompteCloe' and (/flux = 'S_DOC_QUOTE' or /flux = 'S_DOC_QUOTE_XM')
+  source:
+    - Event_Input
+
+MajContrat_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: /table = 'Contrat'
+  source:
+    - Event_Input
+
+# Relation Demande <> Interlocuteur
+MajTdtDemandeInterlocuteurClient_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter:  /source = 'cloe' and /table = 'tdt_DemandeInterlocuteur' and (/flux = 'S_CONTACT' or /flux = 'S_SRV_REQ')
+  source:
+    - Event_Input
+
+####
+## Final mapping of MOE object
+####
+
+
+# Filtre pour l'objet "Compte Facturation" - Cas "Fourniture"
+CompteFacturationFourniture_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: >
+      not(boolean(/IdFelix))
+      or /IdFelix = /dIdFelixF
+  source:
+    - CompteFacturationTdtCompteCloe_Mapper
+    - CompteFacturationTdtMandat_Mapper
+    - CompteFacturationTdtCompteFelix_Mapper
+    - CompteFacturationLinkTdtPersonne_Mapper
+    - CompteFacturationLinkTdtAdresse_Mapper
+
+# Construction de l'objet du MOE "Compte Facturation" - Cas "Fourniture"
+CompteFacturationFourniture_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: compte_facturation_fourniture.json
+  source:
+    - CompteFacturationFourniture_Filter
+
+# Construction des messages pour l'objet CompteFacturation - Cas "Fourniture"
+CompteFacturationFournitureToKafkaOutput:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_CompteFacturationFourniture_to_KafkaOutput.json
+  source:
+    - CompteFacturationFourniture_Filter
+
+# Filtre pour l'objet "Compte Facturation" - Cas "Dépôt de Garantie"
+CompteFacturationDepotGarantie_Filter:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.filter.FilterXPath
+  config:
+    filter: >
+          /dNatureDG = true()
+          and (
+            not(boolean(/IdFelix))
+            or /IdFelix = /dIdFelixDG
+          )
+  source:
+    - CompteFacturationTdtCompteCloe_Mapper
+    - CompteFacturationTdtMandat_Mapper
+    - CompteFacturationTdtCompteFelix_Mapper
+    - CompteFacturationLinkTdtPersonne_Mapper
+    - CompteFacturationLinkTdtAdresse_Mapper
+
+# Construction de l'objet du MOE "Compte Facturation" - Cas "Dépôt de Garantie"
+CompteFacturationDepotGarantie_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: compte_facturation_depot_garantie.json
+  source:
+    - CompteFacturationDepotGarantie_Filter
+
+# Construction des messages pour l'objet CompteFacturation - Cas "Dépôt de Garantie"
+CompteFacturationDepotGarantieToKafkaOutput:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_CompteFacturationDepotGarantie_to_KafkaOutput.json
+  source:
+    - CompteFacturationDepotGarantie_Filter
+
+# Construction de l'objet du MOE "InterlocuteurClient"
+InterlocuteurClient_Mapper:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: interlocuteur_client.json
+  source:
+    - InterlocuteurClientLinkTdtCompteCloe_Mapper
+
+# Construction des messages pour l'objet du MOE "InterlocuteurClient"
+InterlocuteurClientFromLinkTdtCompteCloe_ToKafkaOutput:
+  class: fr.edf.dco.edma.ece.sparktimus.middleware.mapper.MapperTransformer
+  config:
+    mapper: mapper_InterlocuteurClientFromLinkTdtCompteCloe_to_KafkaOutput.json
+  source:
+    - InterlocuteurClientLinkTdtCompteCloe_Mapper
+
+####
+## Outputs
+####
+## Mise à jour de l'objet du MOE "Compte Facturation"
+10_CompteFacturation_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.comptefacturation}
+  source:
+    - CompteFacturationFourniture_Mapper
+    - CompteFacturationDepotGarantie_Mapper
+
+## Mise à jour de l'objet du MOE "Contrat"
+10_Contrat_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.contrat}
+  source:
+    - ContratTdtViePointEnergie_Mapper
+
+## Mise à jour de l'objet du MOE "Demande"
+10_Demande_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.demande}
+  source:
+    - TdtDemandeToDemande_Mapper
+    - AddLinkInterlocuteurInDemande_Mapper
+
+## Mise à jour de l'objet du MOE "Adresse"
+10_Adresse_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.adresse}
+  source:
+    - AdressePeLinks_Mapper
+
+
+## Mise à jour de l'objet du MOE "Interlocuteur Client"
+10_InterlocuteurClient_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.interlocuteurclient}
+  source:
+    - InterlocuteurClient_Mapper
+    - Map_tdt_ResponsabiliteToInterlocuteurClient
+    - Map_tdt_AdresseToInterlocuteurClient
+    - Map_NewLoginToInterlocuteurClient
+    - AddLinkDemandeInInterlocuteur_Mapper
+
+## Mise à jour de l'objet du MOE "Point Energie"
+10_PointEnergie_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.pointenergie}
+  source:
+    - PointEnergie_Mapper
+    - PeAdresseLinks_Mapper
+    - PointEnergieTDTVPE_Mapper
+    - PointEnergieDelete_Mapper
+
+## Mise à jour de l'objet du MOE "Proposition Commerciale"
+10_PropositionCommerciale_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.proposition_commerciale}
+  source:
+    - PropositionCommerciale_Mapper
+
+## Mise à jour de l'objet du MOE "Vie Point Energie"
+10_ViePointEnergie_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.vpe}
+  source:
+    - ViePointEnergie_Mapper
+    - ViePointEnergie_StatutVPE_Mapper
+
+## Mise à jour de la table de travail "Compte Cloe"
+## 17/01/2018 : Ajout de #Devis
+10_TdtCompteCloe_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.tdtcomptecloe}
+  source:
+    - TdtCompteCloePointEnergie_Mapper
+    - TdtCompteCloe_add_DevisMapper
+
+## Mise à jour de la table de travail "Vie Point Energie"
+10_TdtViePointEnergie_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.tdtvpe}
+  source:
+    - TdtViePointEnergie_Mapper
+
+10_RejetsViePointEnergie_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.rejetsvpe}
+  source:
+    - RejetViePointEnergieMapper
+
+10_Delete_RejetsViePointEnergie_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseDeleteOutput
+  config:
+    table: ${hbase.table.rejetsvpe}
+  source:
+    - DeleteRejetsViePointEnergie_Mapper
+
+20_KafkaOutput:
+  log: 20_KafkaOutput
+  class: fr.edf.dco.edma.ece.sparktimus.output.kafka.SecuredKafkaOutput
+  config:
+    topic: ${kafka.topic.input.events}
+    broker: ${kafka.broker}
+  source:
+    - FakeEventTdtCompteCloeFromLink_Mapper
+    - FakeEventTdtPersonneFromLink_Mapper
+    - TdtDemandeToKafkaOuput_Mapper
+    - Map_InterlocuteurClientToKafkaOuput
+    - Event_TdtCompteCloe_DevisMapper
+    - Event_PointEnergie_Mapper
+    - EventViePointEnergieMapper
+    - Event_InterlocuteurInDemande_Mapper
+    - Event_DemandeInInterlocuteur_Mapper
+    - Events_ViePointEnergie_TdtDemandePrestationMapper
+    - EventViePointEnergieForElasticMapper
+    - CompteFacturationFournitureToKafkaOutput
+    - CompteFacturationDepotGarantieToKafkaOutput
+    - InterlocuteurClientFromLinkTdtCompteCloe_ToKafkaOutput
+
+## Mise à jour de la table de demande de prestation
+10_TdtDemandePrestation_Output:
+  class: fr.edf.dco.edma.ece.sparktimus.output.hbase.HBaseOutput
+  config:
+    table: ${hbase.table.tdtdemandeprestation}
+  source:
+    - DemandePrestationC5_Mapper
+    - DemandePrestationC2C4_Mapper
+

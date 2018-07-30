@@ -14,7 +14,6 @@
     </v-tooltip>
   </drag>
 </template>
-
 <script>
 export default {
   name: 'ZSideboardBlock',

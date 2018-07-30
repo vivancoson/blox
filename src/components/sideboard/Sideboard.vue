@@ -16,7 +16,6 @@
         class="px-2 py-1"
         hide-details/>
     </v-layout>
-
     <div class="sideboard">
       <z-custom-block/>
       <z-sideboard-block
