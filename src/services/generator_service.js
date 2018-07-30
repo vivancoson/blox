@@ -20,9 +20,9 @@ export default class GeneratorService {
         .uniq()
         .sort()
         .value();
-      const name = block.name;
+      const { name } = block;
       const config = block.fields;
-      const clazz = block.clazz;
+      const { clazz } = block;
       result[name] = {
         class: clazz,
       };

@@ -1,15 +1,19 @@
 <template>
-  <v-app dark fluid>
+  <v-app
+    dark
+    fluid>
     <div id="app">
-      <v-layout row wrap>
-        <z-header-toolbar></z-header-toolbar>
-        <z-side-board></z-side-board>
+      <v-layout
+        row
+        wrap>
+        <z-header-toolbar/>
+        <z-side-board/>
         <v-flex xs12>
-          <z-main-board></z-main-board>
+          <z-main-board/>
         </v-flex>
-        <z-modal-form></z-modal-form>
+        <z-modal-form/>
       </v-layout>
-      <z-viewer></z-viewer>
+      <z-viewer/>
     </div>
   </v-app>
 </template>

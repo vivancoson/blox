@@ -30,7 +30,9 @@ export default new Vuex.Store({
       const block = state.blockInWorkflow[index];
       block.name = payload.name;
       for (const key in payload.fields) {
-        block.fields[key] = payload.fields[key];
+        if ({}.hasOwnProperty.call(payload.fields, key)) {
+          block.fields[key] = payload.fields[key];
+        }
       }
     },
     setCurrentBlock(state, block) {

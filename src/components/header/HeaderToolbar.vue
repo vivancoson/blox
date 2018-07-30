@@ -1,11 +1,18 @@
 <template>
   <div>
-    <v-toolbar class="header-toolbar" dense fixed app>
-      <v-toolbar-side-icon @click.stop="switchDrawer"></v-toolbar-side-icon>
-      <img src="../../assets/logo.png" class="main-logo-toolbar" alt="logo Edimus"/>
-      <v-spacer></v-spacer>
+    <v-toolbar
+      class="header-toolbar"
+      dense
+      fixed
+      app>
+      <v-toolbar-side-icon @click.stop="switchDrawer"/>
+      <img
+        src="../../assets/logo.png"
+        class="main-logo-toolbar"
+        alt="logo Edimus">
+      <v-spacer/>
       <v-toolbar-items>
-        <v-divider vertical></v-divider>
+        <v-divider vertical/>
 
         <v-btn
           flat
@@ -14,20 +21,26 @@
           clear workflow
         </v-btn>
 
-        <v-divider vertical></v-divider>
+        <v-divider vertical/>
 
         <v-btn
           :disabled="displayLoader"
           :loading="displayLoader"
-          @click="importYamlInput"
           flat
+          @click="importYamlInput"
         >
           import yaml file
         </v-btn>
 
-        <v-divider vertical></v-divider>
+        <v-divider vertical/>
 
-        <input type="file" ref="fileElement" id="yaml-file-input" @change="importYaml" multiple hidden/>
+        <input
+          id="yaml-file-input"
+          ref="fileElement"
+          type="file"
+          multiple
+          hidden
+          @change="importYaml">
       </v-toolbar-items>
     </v-toolbar>
     <v-dialog
@@ -40,7 +53,7 @@
           Loading...
           <v-progress-linear
             indeterminate
-          ></v-progress-linear>
+          />
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -52,9 +65,9 @@
     >
       Unable to load file
       <v-btn
-        @click="displaySnackbar = false"
         icon
         left
+        @click="displaySnackbar = false"
       >
         <v-icon>close</v-icon>
       </v-btn>

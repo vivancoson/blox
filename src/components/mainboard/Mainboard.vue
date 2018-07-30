@@ -5,11 +5,11 @@
     @drop="handleDrop"
   >
     <z-main-block
-    v-for="block in blockInWorkflow"
-    :id="block.id"
-    :key="block.id"
-    :block="block"
-    ></z-main-block>
+      v-for="block in blockInWorkflow"
+      :id="block.id"
+      :key="block.id"
+      :block="block"
+    />
   </drop>
 </template>
 
@@ -29,7 +29,7 @@ export default {
   methods: {
     handleDrop(data, event) {
       if (data) {
-        const def = data.def;
+        const { def } = data;
         const block = new Block(this.uuidService.uuid(), `${def.name}Block`, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions);
         block.setPosition(event.offsetX - 90, event.offsetY - 75);
         this.addBlockToWorkflow(block);
