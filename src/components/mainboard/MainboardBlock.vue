@@ -1,31 +1,49 @@
 <template>
-  <v-layout :style="blockPosition" class="mainboard-block elevation-10">
+  <v-layout
+    :style="blockPosition"
+    class="mainboard-block elevation-10">
     <v-flex>
-      <v-card :class="color" class="mainboard-block--size" @drop="alert(1)">
+      <v-card
+        :class="color"
+        class="mainboard-block--size"
+        @drop="alert(1)">
         <v-card-title>
-          <div class="body-2 mainboard-block--text" :title=block.name>{{block.name}}</div>
-          <span class="body-1 mainboard-block--text" :title=getClassName>{{getClassName}}</span>
+          <div
+            :title="block.name"
+            class="body-2 mainboard-block--text">{{ block.name }}</div>
+          <span
+            :title="getClassName"
+            class="body-1 mainboard-block--text">{{ getClassName }}</span>
         </v-card-title>
 
-        <div class="ep"></div>
+        <div class="ep"/>
 
         <v-card-actions>
           <v-tooltip bottom>
-            <v-btn icon v-on:click="showConfig = !showConfig" slot="activator">
+            <v-btn
+              slot="activator"
+              icon
+              @click="showConfig = !showConfig">
               <v-icon large>{{ showConfig ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
             </v-btn>
             <span>{{ showConfig ? 'Réduire' : 'Détails' }}</span>
           </v-tooltip>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-tooltip bottom>
-            <v-btn v-on:click="selectBlock" icon slot="activator">
+            <v-btn
+              slot="activator"
+              icon
+              @click="selectBlock">
               <v-icon>edit</v-icon>
             </v-btn>
             <span>Modifier</span>
           </v-tooltip>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-tooltip bottom>
-            <v-btn v-on:click="removeBlock" icon slot="activator">
+            <v-btn
+              slot="activator"
+              icon
+              @click="removeBlock">
               <v-icon medium>clear</v-icon>
             </v-btn>
             <span>Supprimer</span>
@@ -34,8 +52,10 @@
 
         <v-slide-y-transition>
           <v-card-text v-show="showConfig">
-            <div v-for="(value, key) in block.fields" v-bind:key="key">
-              <span v-once>{{key}} : </span> <span>{{value}}</span>
+            <div
+              v-for="(value, key) in block.fields"
+              :key="key">
+              <span v-once>{{ key }} : </span> <span>{{ value }}</span>
             </div>
           </v-card-text>
         </v-slide-y-transition>
@@ -51,6 +71,16 @@ import constants from '../../constants/constants';
 export default {
   name: 'ZMainBlock',
   inject: ['jsPlumbService'],
+  props: {
+    block: {
+      type: Object,
+      default() {
+        return {
+          name: 'DefautBlockValue',
+        };
+      },
+    },
+  },
   data: () => ({
     showConfig: false,
     blockPosition: {
@@ -63,8 +93,21 @@ export default {
       return constants.blockTypes[this.block.type].color;
     },
     getClassName() {
-      return this.block.clazz.split('.').pop();
+      if (this.block.clazz) {
+        return this.block.clazz.split('.').pop();
+      }
+      return 'no-class-found';
     },
+  },
+  beforeMount() {
+    this.setBlockPosition(this.block.positionX, this.block.positionY);
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.jsPlumbService.initiateBlock(this.block, ({ pos }) => {
+        this.block.setPosition(pos[0], pos[1]);
+      });
+    });
   },
   methods: {
     removeBlock() {
@@ -85,18 +128,6 @@ export default {
       'setModalFormOpen',
     ]),
   },
-  beforeMount() {
-    this.setBlockPosition(this.block.positionX, this.block.positionY);
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.jsPlumbService.initiateBlock(this.block, ({ pos }) => {
-        this.block.setPosition(pos[0], pos[1]);
-      });
-    });
-  },
-  props: ['block'],
-  components: {},
 };
 </script>
 

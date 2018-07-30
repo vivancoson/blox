@@ -1,22 +1,34 @@
 <template>
   <div>
-    <v-bottom-sheet hide-overlay inset v-model="yamlViewerOpen">
+    <v-bottom-sheet
+      v-model="yamlViewerOpen"
+      hide-overlay
+      inset>
       <v-card class="yaml-viewer">
         <div class="yaml-viewer-toolbar">
-          <v-btn @click="copyToClipboard" icon>
+          <v-btn
+            icon
+            @click="copyToClipboard">
             <v-icon>content_copy</v-icon>
           </v-btn>
-          <v-btn @click="downloadYaml" icon>
+          <v-btn
+            icon
+            @click="downloadYaml">
             <v-icon>save_alt</v-icon>
           </v-btn>
         </div>
       </v-card>
-      <code id="yaml-text" v-html="yamlForHTML"></code>
+      <code
+        id="yaml-text"
+        v-html="yamlForHTML"/>
     </v-bottom-sheet>
 
     <v-layout justify-end>
-      <v-btn id="yaml-viewer-toggle-button" @click="switchViewerOpen" :disabled="yamlForHTML.length === 0">
-        <span>{{yamlViewerOpen ? 'hide yaml' : 'view yaml'}}</span>
+      <v-btn
+        id="yaml-viewer-toggle-button"
+        :disabled="yamlForHTML.length === 0"
+        @click="switchViewerOpen">
+        <span>{{ yamlViewerOpen ? 'hide yaml' : 'view yaml' }}</span>
       </v-btn>
     </v-layout>
   </div>
@@ -50,6 +62,9 @@ export default {
         this.setViewerOpen(false);
       }
     },
+  },
+  created() {
+    this.jsPlumbService.listenToConnectionChanges(() => this.generateYaml());
   },
   methods: {
     copyToClipboard() {
@@ -85,9 +100,6 @@ export default {
       'switchViewerOpen',
       'setViewerOpen',
     ]),
-  },
-  created() {
-    this.jsPlumbService.listenToConnectionChanges(() => this.generateYaml());
   },
 };
 </script>

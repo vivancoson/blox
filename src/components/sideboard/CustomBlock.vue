@@ -1,25 +1,37 @@
 <template>
-  <v-layout row justify-center>
-    <v-dialog v-model="showDialog" persistent max-width="500px">
+  <v-layout
+    row
+    justify-center>
+    <v-dialog
+      v-model="showDialog"
+      persistent
+      max-width="500px">
       <v-btn slot="activator">Nouveau Bloc</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">Création d'un nouveau bloc</span>
         </v-card-title>
-        <v-form ref="formCustomBlock" v-model="valid" lazy-validation>
+        <v-form
+          ref="formCustomBlock"
+          v-model="valid"
+          lazy-validation>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-flex xs12 sm8>
+                <v-flex
+                  xs12
+                  sm8>
                   <v-text-field
                     v-model="blockName"
                     :rules="[() => !!blockName || 'Veuillez entrer un nom']"
                     label="Nom"
                     hint="Nom du bloc"
                     required
-                  ></v-text-field>
+                  />
                 </v-flex>
-                <v-flex xs12 sm4>
+                <v-flex
+                  xs12
+                  sm4>
                   <v-select
                     v-model="blockType"
                     :rules="[() => !!blockType || 'Veuillez choisir un type']"
@@ -27,7 +39,7 @@
                     label="Type"
                     hint="Spéficiez le type de bloc"
                     required
-                  ></v-select>
+                  />
                 </v-flex>
                 <v-flex xs12>
                   <v-text-field
@@ -36,19 +48,21 @@
                     label="Class"
                     hint="Class Java qui définie le bloc"
                     required
-                  ></v-text-field>
+                  />
                 </v-flex>
                 <v-flex xs12>
                   <h3>Config:</h3>
                 </v-flex>
-                <v-layout v-for="(param, index) in blockConfig" :key="param.id">
+                <v-layout
+                  v-for="(param, index) in blockConfig"
+                  :key="param.id">
                   <v-flex xs4>
                     <v-text-field
                       v-model="param.name"
                       :rules="[() => !!param.name || 'Veuillez entrer un nom de paramètre']"
                       label="Paramètre"
                       hide-details
-                    ></v-text-field>
+                    />
                   </v-flex>
                   <v-flex xs7>
                     <v-text-field
@@ -56,25 +70,40 @@
                       :rules="[() => !!param.value || 'Veuillez entrer une valeur']"
                       label="Valeur"
                       hide-details
-                    ></v-text-field>
+                    />
                   </v-flex>
-                    <v-tooltip xs1 bottom>
-                      <v-btn @click="blockConfig.splice(index, 1)" icon slot="activator">
-                        <v-icon>clear</v-icon>
-                      </v-btn>
-                      <span>Supprimer</span>
-                    </v-tooltip>
+                  <v-tooltip
+                    xs1
+                    bottom>
+                    <v-btn
+                      slot="activator"
+                      icon
+                      @click="blockConfig.splice(index, 1)">
+                      <v-icon>clear</v-icon>
+                    </v-btn>
+                    <span>Supprimer</span>
+                  </v-tooltip>
                 </v-layout>
-                <v-btn class="BtnNoTextTransform" @click="addNewParamsInConfig" flat small right>Ajouter un paramètre...</v-btn>
+                <v-btn
+                  class="BtnNoTextTransform"
+                  flat
+                  small
+                  right
+                  @click="addNewParamsInConfig">Ajouter un paramètre...</v-btn>
               </v-layout>
             </v-container>
             <small>*Champs obligatoires</small>
           </v-card-text>
         </v-form>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat @click.native="clearCustomBlockForm">Fermer</v-btn>
-          <v-btn flat @click.native="createBlock" :disabled="!valid">Créer</v-btn>
+          <v-spacer/>
+          <v-btn
+            flat
+            @click.native="clearCustomBlockForm">Fermer</v-btn>
+          <v-btn
+            :disabled="!valid"
+            flat
+            @click.native="createBlock">Créer</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -113,7 +142,13 @@ export default {
         _.forEach(this.blockConfig, (e) => {
           config[e.name] = e.value;
         });
-        const block = new Block(this.uuidService.uuid(), this.blockName, this.blockType, this.blockClazz, _.cloneDeep(config));
+        const block = new Block(
+          this.uuidService.uuid(),
+          this.blockName,
+          this.blockType,
+          this.blockClazz,
+          _.cloneDeep(config),
+        );
         block.setPosition(400, 400);
         this.clearCustomBlockForm();
       }

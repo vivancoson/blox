@@ -1,11 +1,18 @@
 <template>
-  <v-layout row justify-center>
-    <v-dialog v-model="modalFormOpen" max-width="600">
+  <v-layout
+    row
+    justify-center>
+    <v-dialog
+      v-model="modalFormOpen"
+      max-width="600">
       <v-card>
         <v-card-title>
-          <span class="headline">{{blockCopy.clazz}}</span>
+          <span class="headline">{{ blockCopy.clazz }}</span>
         </v-card-title>
-        <v-form ref="formCustomBlock" v-model="valid" lazy-validation>
+        <v-form
+          ref="formCustomBlock"
+          v-model="valid"
+          lazy-validation>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
@@ -16,24 +23,26 @@
                     label="Nom"
                     hint="Nom du bloc"
                     required
-                  ></v-text-field>
+                  />
                   <v-flex xs12>
                     <h3>Config:</h3>
                   </v-flex>
-                  <div v-bind:key="key" v-for="(value, key) in blockCopy.fields">
-                  <v-text-field
-                    v-if="!blockCopy.suggestions[key].length"
-                    v-bind:label="key | capitalize"
-                    v-model="blockCopy.fields[key]"
-                    v-bind:hint="blockCopy.details[key].description | capitalize"
-                  ></v-text-field>
-                  <v-autocomplete
-                    v-if="blockCopy.suggestions[key].length"
-                    v-bind:label="key | capitalize"
-                    v-model="blockCopy.fields[key]"
-                    v-bind:hint="blockCopy.details[key].description | capitalize"
-                    v-bind:items="blockCopy.suggestions[key]"
-                    ></v-autocomplete>
+                  <div
+                    v-for="(value, key) in blockCopy.fields"
+                    :key="key">
+                    <v-text-field
+                      v-if="!blockCopy.suggestions[key].length"
+                      :label="key | capitalize"
+                      v-model="blockCopy.fields[key]"
+                      :hint="blockCopy.details[key].description | capitalize"
+                    />
+                    <v-autocomplete
+                      v-if="blockCopy.suggestions[key].length"
+                      :label="key | capitalize"
+                      v-model="blockCopy.fields[key]"
+                      :hint="blockCopy.details[key].description | capitalize"
+                      :items="blockCopy.suggestions[key]"
+                    />
                   </div>
                 </v-flex>
               </v-layout>
@@ -43,9 +52,14 @@
         </v-form>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn flat @click.native="close">Fermer</v-btn>
-          <v-btn flat @click.native="save" :disabled="!valid">Sauvegarder</v-btn>
+          <v-spacer/>
+          <v-btn
+            flat
+            @click.native="close">Fermer</v-btn>
+          <v-btn
+            :disabled="!valid"
+            flat
+            @click.native="save">Sauvegarder</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -58,6 +72,13 @@ import { cloneDeep } from 'lodash';
 
 export default {
   name: 'ZModalForm',
+  filters: {
+    capitalize(value) {
+      if (!value) return '';
+      const valueToString = value.toString();
+      return valueToString.charAt(0).toUpperCase() + valueToString.slice(1);
+    },
+  },
   data() {
     return {
       valid: false,
@@ -93,13 +114,6 @@ export default {
       'setModalFormOpen',
       'changeCurrentBlockFields',
     ]),
-  },
-  filters: {
-    capitalize(value) {
-      if (!value) return '';
-      const valueToString = value.toString();
-      return valueToString.charAt(0).toUpperCase() + valueToString.slice(1);
-    },
   },
 };
 </script>

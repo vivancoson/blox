@@ -33,10 +33,12 @@ export default class JsPlumbService {
 
   listenToConnectionChanges(handler) {
     if (this.hasListener === false) {
-      for (const value in constants.connectionEvents) {
-        this.instance.bind(value, handler);
-        this.hasListener = true;
+      for (const event in constants.connectionEvents) {
+        if ({}.hasOwnProperty.call(constants.connectionEvents, event)) {
+          this.instance.bind(event, handler);
+        }
       }
+      this.hasListener = true;
     }
   }
 
