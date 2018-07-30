@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer hide-overlay stateless width="200" v-model="sidePanelOpen" app>
     <v-layout row align-center>
-      <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 py-1" hide-details></v-text-field>
+      <v-text-field placeholder="Rechercher..." single-line append-icon="search" v-model="searchInput" class="px-2 py-1" id="sideboard-block-search-input" hide-details></v-text-field>
     </v-layout>
 
     <div class="sideboard">
