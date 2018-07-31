@@ -63,7 +63,7 @@
       color="red darken-4"
       top
     >
-      Unable to load file
+      {{ errorMessage }}
       <v-btn
         icon
         left
@@ -92,6 +92,7 @@ export default {
     return {
       displayLoader: false,
       displaySnackbar: false,
+      errorMessage: 'Unable to load file',
     };
   },
   methods: {
@@ -125,7 +126,11 @@ export default {
             delete yamlToJson[key];
           }
         });
-        finalGrid.push(levelArray);
+        if (levelArray.length === 0) {
+          throw new Error('There is no "Input" in the YAML');
+        } else {
+          finalGrid.push(levelArray);
+        }
         while (Object.keys(yamlToJson).length !== 0) {
           levelArray = [];
           finalGrid[finalGrid.length - 1].forEach((block) => {
@@ -169,7 +174,8 @@ export default {
           });
           this.displayLoader = false;
         });
-      }).catch(() => {
+      }).catch((e) => {
+        this.errorMessage = e.message;
         this.displayLoader = false;
         this.displaySnackbar = true;
       });
