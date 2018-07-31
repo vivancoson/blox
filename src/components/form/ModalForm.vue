@@ -7,7 +7,7 @@
       max-width="600">
       <v-card>
         <v-card-title>
-          <span class="headline">{{ blockCopy.clazz }}</span>
+          <span class="headline">Modification</span>
         </v-card-title>
         <v-form
           ref="formCustomBlock"
@@ -22,6 +22,13 @@
                     :rules="[() => !!blockCopy.name || 'Veuillez entrer un nom']"
                     label="Nom"
                     hint="Nom du bloc"
+                    required
+                  />
+                  <v-text-field
+                    v-model="blockCopy.clazz"
+                    :rules="[() => !!blockCopy.clazz || 'Veuillez entrer une classe']"
+                    label="Classe"
+                    hint="Classe du bloc"
                     required
                   />
                   <v-flex xs12>
