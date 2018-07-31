@@ -35,7 +35,7 @@ export default class JsPlumbService {
     if (this.hasListener === false) {
       for (const event in constants.connectionEvents) {
         if ({}.hasOwnProperty.call(constants.connectionEvents, event)) {
-          this.instance.bind(event, handler);
+          this.getInstance().bind(constants.connectionEvents[event], handler);
         }
       }
       this.hasListener = true;

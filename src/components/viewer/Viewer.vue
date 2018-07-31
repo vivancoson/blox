@@ -40,9 +40,15 @@ import { mapMutations, mapState } from 'vuex';
 export default {
   name: 'ZViewer',
   inject: ['generatorService', 'jsPlumbService'],
+  data() {
+    return {
+      generatedYaml: '',
+    };
+  },
   computed: {
     yamlForHTML() {
-      return this.generatorService.generateYamlViewerHTML(this.generateYaml());
+      this.generateYaml();
+      return this.generatorService.generateYamlViewerHTML(this.generatedYaml);
     },
     yamlViewerOpen: {
       get() {
@@ -58,13 +64,13 @@ export default {
   },
   watch: {
     yamlForHTML() {
-      if (this.yamlForHTML === '') {
+      if (this.generatedYaml === '') {
         this.setViewerOpen(false);
       }
     },
   },
   created() {
-    this.jsPlumbService.listenToConnectionChanges(() => this.generateYaml());
+    this.jsPlumbService.listenToConnectionChanges(() => { this.generatedYaml = this.generateYaml(); });
   },
   methods: {
     copyToClipboard() {
@@ -72,7 +78,7 @@ export default {
       document.execCommand('copy');
     },
     generateYaml() {
-      return this.generatorService.generate(
+      this.generatedYaml = this.generatorService.generate(
         this.blockInWorkflow,
         this.jsPlumbService.getAllConnections(),
       );
