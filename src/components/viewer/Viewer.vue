@@ -14,7 +14,7 @@
           <v-btn
             icon
             @click="downloadYaml">
-            <v-icon>save_alt</v-icon>
+            <v-icon>save</v-icon>
           </v-btn>
         </div>
       </v-card>
