@@ -16,6 +16,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import _ from 'lodash';
+import constants from '../../constants/constants';
 import ZMainBlock from './MainboardBlock.vue';
 import Block from '../../models/block';
 
@@ -26,6 +27,20 @@ export default {
   computed: mapState([
     'blockInWorkflow',
   ]),
+  created() {
+    this.jsPlumbService.listenToConnectionChanges((info, eventType) => {
+      if (eventType === constants.connectionEvents.attached) {
+        this.addSourceToBlock(info);
+      } else if (eventType === constants.connectionEvents.detached) {
+        this.removeSourceFromBlock(info);
+      } else {
+        this.removeSourceFromBlock({
+          source: { id: info.originalSourceId },
+          target: { id: info.originalTargetId },
+        });
+      }
+    });
+  },
   methods: {
     handleDrop(data, event) {
       if (data) {
@@ -39,6 +54,8 @@ export default {
     },
     ...mapMutations([
       'addBlockToWorkflow',
+      'addSourceToBlock',
+      'removeSourceFromBlock',
     ]),
   },
 };

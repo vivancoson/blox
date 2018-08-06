@@ -1,21 +1,11 @@
 import { jsPlumb } from 'jsplumb';
 import constants from '../constants/constants';
 
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i += 1) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-
 export default class JsPlumbService {
   instance = null;
-  hasListener = false;
-
+  handlers = [];
   createInstance() {
-    return jsPlumb.getInstance({
+    const instance = jsPlumb.getInstance({
       Container: 'container',
       Connector: 'StateMachine',
       Anchor: ['Perimeter', { shape: 'Square' }],
@@ -32,6 +22,14 @@ export default class JsPlumbService {
         ],
       ],
     });
+    for (const event in constants.connectionEvents) {
+      if ({}.hasOwnProperty.call(constants.connectionEvents, event)) {
+        instance.bind(constants.connectionEvents[event], (info, originalEvent) => {
+          this.handlers.forEach(h => h(info, constants.connectionEvents[event], originalEvent));
+        });
+      }
+    }
+    return instance;
   }
 
   getInstance() {
@@ -42,23 +40,7 @@ export default class JsPlumbService {
   }
 
   listenToConnectionChanges(handler) {
-    if (this.hasListener === false) {
-      for (const event in constants.connectionEvents) {
-        if ({}.hasOwnProperty.call(constants.connectionEvents, event)) {
-          this.getInstance().bind(constants.connectionEvents[event], handler);
-        }
-      }
-      this.getInstance().bind('connection', (info) => {
-        const con = info.connection; // this is the new connection
-        con.bind('click', () => {
-          con.setPaintStyle({
-            strokeWidth: 5,
-            stroke: getRandomColor(),
-          });
-        });
-      });
-      this.hasListener = true;
-    }
+    this.handlers.push(handler);
   }
 
   getAllConnections() {
@@ -73,8 +55,23 @@ export default class JsPlumbService {
     this.instance.remove(block.id);
   }
 
+  removeFilteredConnections(blocks) {
+    this.batch(() => {
+      this.instance.selectEndpoints().setVisible(true);
+      this.instance.selectEndpoints({
+        element: blocks.filter(e => e.filtered).map(e => e.id),
+      }).setVisible(false);
+    });
+  }
+
+  showAllConnections() {
+    this.batch(() => {
+      this.instance.selectEndpoints().setVisible(true);
+    });
+  }
+
   clearWorkflow() {
-    this.getInstance().deleteEveryEndpoint();
+    this.batch(this.getInstance().deleteEveryEndpoint);
   }
 
   connect(sourceId, targetId) {

@@ -178,12 +178,15 @@ export default {
         this.errorMessage = e.message;
         this.displayLoader = false;
         this.displaySnackbar = true;
+      }).finally(() => {
+        this.$refs.fileElement.value = '';
       });
     },
     ...mapMutations([
       'addBlockToWorkflow',
       'clearAllBlockInWorkflow',
       'switchsidePanelOpen',
+      'setSelectedBlockConnections',
     ]),
   },
 };

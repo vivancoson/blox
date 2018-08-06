@@ -35,13 +35,24 @@
                   <v-flex xs12>
                     <h3>Config:</h3>
                   </v-flex>
-                  <v-text-field
+                  <div
                     v-for="(value, key) in blockCopy.fields"
-                    :label="key | capitalize"
-                    v-model="blockCopy.fields[key]"
-                    :key="key"
-                    hide-details
-                  />
+                    :key="key">
+                    <v-text-field
+                      v-if="!blockCopy.suggestions[key].length"
+                      :label="key | capitalize"
+                      v-model="blockCopy.fields[key]"
+                      :hint="blockCopy.details[key].description | capitalize"
+                    />
+                    <v-combobox
+                      v-if="blockCopy.suggestions[key].length"
+                      :label="key | capitalize"
+                      :solo="true"
+                      v-model="blockCopy.fields[key]"
+                      :hint="blockCopy.details[key].description | capitalize"
+                      :items="blockCopy.suggestions[key]"
+                    />
+                  </div>
                 </v-flex>
               </v-layout>
             </v-container>

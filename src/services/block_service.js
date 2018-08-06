@@ -21,6 +21,23 @@ export default class BlockService {
     });
   }
 
+  calculatePath(paths, blockList, up = true) {
+    const result = {};
+    if (paths) {
+      paths.forEach((value) => {
+        result[value] = value;
+        const block = blockList[value];
+        if (block) {
+          const relations = this.calculatePath(up ? block.sources : block.targets, blockList, up);
+          _.forOwn(relations, (e) => {
+            result[e] = e;
+          });
+        }
+      });
+    }
+    return result;
+  }
+
   getDefinitions() {
     return axios
       .all([
