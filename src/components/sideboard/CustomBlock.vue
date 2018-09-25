@@ -1,3 +1,4 @@
+<!-- Composant formulaire de creation de nouveau bloc -->
 <template>
   <v-layout
     row
@@ -32,7 +33,7 @@
                 <v-flex
                   xs12
                   sm4>
-                  <v-select
+                  <v-autocomplete
                     v-model="blockType"
                     :rules="[() => !!blockType || 'Veuillez choisir un type']"
                     :items="['input', 'middleware', 'output']"
@@ -111,7 +112,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { mapMutations } from 'vuex';
+import { forEach, cloneDeep } from 'lodash';
 import Block from '../../models/block';
 
 export default {
@@ -139,17 +141,21 @@ export default {
     createBlock() {
       if (this.$refs.formCustomBlock.validate()) {
         const config = {};
-        _.forEach(this.blockConfig, (e) => {
+        forEach(this.blockConfig, (e) => {
           config[e.name] = e.value;
         });
+
         const block = new Block(
           this.uuidService.uuid(),
           this.blockName,
           this.blockType,
           this.blockClazz,
-          _.cloneDeep(config),
+          cloneDeep(config),
         );
-        block.setPosition(400, 400);
+        const blockPositionX = window.scrollX + (window.innerWidth / 2);
+        const blockPositionY = window.scrollY + (window.innerHeight / 2.3);
+        block.setPosition(blockPositionX, blockPositionY);
+        this.addBlockToWorkflow(block);
         this.clearCustomBlockForm();
       }
     },
@@ -158,6 +164,9 @@ export default {
       this.blockConfig = [];
       this.showDialog = false;
     },
+    ...mapMutations([
+      'addBlockToWorkflow',
+    ]),
   },
 };
 </script>

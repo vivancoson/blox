@@ -26,7 +26,7 @@ export default class GeneratorService {
       result[name] = {
         class: clazz,
       };
-      if (config) {
+      if (config && config.length > 0) {
         result[name].config = config;
       }
       if (source && source.length > 0) {
