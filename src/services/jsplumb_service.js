@@ -1,9 +1,19 @@
 import { jsPlumb } from 'jsplumb';
 import constants from '../constants/constants';
 
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i += 1) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
 export default class JsPlumbService {
   instance = null;
   hasListener = false;
+
   createInstance() {
     return jsPlumb.getInstance({
       Container: 'container',
@@ -38,6 +48,15 @@ export default class JsPlumbService {
           this.getInstance().bind(constants.connectionEvents[event], handler);
         }
       }
+      this.getInstance().bind('connection', (info) => {
+        const con = info.connection; // this is the new connection
+        con.bind('click', () => {
+          con.setPaintStyle({
+            strokeWidth: 5,
+            stroke: getRandomColor(),
+          });
+        });
+      });
       this.hasListener = true;
     }
   }
