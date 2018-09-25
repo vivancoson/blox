@@ -1,3 +1,4 @@
+<!-- Form to modify a bloc -->
 <template>
   <v-layout
     row
@@ -34,23 +35,13 @@
                   <v-flex xs12>
                     <h3>Config:</h3>
                   </v-flex>
-                  <div
+                  <v-text-field
                     v-for="(value, key) in blockCopy.fields"
-                    :key="key">
-                    <v-text-field
-                      v-if="!blockCopy.suggestions[key].length"
-                      :label="key | capitalize"
-                      v-model="blockCopy.fields[key]"
-                      :hint="blockCopy.details[key].description | capitalize"
-                    />
-                    <v-autocomplete
-                      v-if="blockCopy.suggestions[key].length"
-                      :label="key | capitalize"
-                      v-model="blockCopy.fields[key]"
-                      :hint="blockCopy.details[key].description | capitalize"
-                      :items="blockCopy.suggestions[key]"
-                    />
-                  </div>
+                    :label="key | capitalize"
+                    v-model="blockCopy.fields[key]"
+                    :key="key"
+                    hide-details
+                  />
                 </v-flex>
               </v-layout>
             </v-container>
