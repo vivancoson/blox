@@ -30,7 +30,9 @@ export default {
     handleDrop(data, event) {
       if (data) {
         const { def } = data;
-        const block = new Block(this.uuidService.uuid(), `${def.name}Block`, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions);
+        const id = this.uuidService.uuid();
+        const name = `${def.name}_${id.substring(30)}`;
+        const block = new Block(id, name, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions);
         block.setPosition(event.offsetX - 90, event.offsetY - 75);
         this.addBlockToWorkflow(block);
       }

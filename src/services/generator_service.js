@@ -1,3 +1,5 @@
+/* Class used to generate the YAML */
+
 import _ from 'lodash';
 import Prism from 'prismjs';
 import loadLanguages from 'prismjs/components/index';
@@ -26,8 +28,9 @@ export default class GeneratorService {
       result[name] = {
         class: clazz,
       };
-      if (config && config.length > 0) {
+      if (config && Object.keys(config).length > 0) {
         result[name].config = config;
+        console.log(config);
       }
       if (source && source.length > 0) {
         result[name].source = source;

@@ -85,7 +85,7 @@ export default {
     },
     downloadYaml() {
       const filename = 'workflow.yaml';
-      const file = new Blob([this.generateYaml()], { type: 'application/x-yaml;charset=utf-8' });
+      const file = new Blob([this.generatedYaml], { type: 'application/x-yaml;charset=utf-8' });
 
       if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(file, filename);
