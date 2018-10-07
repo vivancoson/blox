@@ -39,6 +39,7 @@
                     :items="['input', 'middleware', 'output']"
                     label="Type"
                     hint="Spéficiez le type de bloc"
+                    attach
                     required
                   />
                 </v-flex>
