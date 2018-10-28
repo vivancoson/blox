@@ -59,7 +59,6 @@
             <small>*Champs obligatoires</small>
           </v-card-text>
         </v-form>
-
         <v-card-actions>
           <v-spacer/>
           <v-btn
@@ -78,9 +77,13 @@
 <script>
 import { mapMutations, mapState } from 'vuex';
 import { cloneDeep } from 'lodash';
+import editor from 'vue2-ace-editor';
 
 export default {
   name: 'ZModalForm',
+  components: {
+    editor,
+  },
   filters: {
     capitalize(value) {
       if (!value) return '';
@@ -91,6 +94,11 @@ export default {
   data() {
     return {
       valid: false,
+      content: '',
+      options: {
+        enableBasicAutocompletion: true,
+        highlightActiveLine: true,
+      },
     };
   },
   computed: {

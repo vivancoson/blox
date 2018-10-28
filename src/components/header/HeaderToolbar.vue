@@ -13,7 +13,6 @@
       <v-spacer/>
       <v-toolbar-items>
         <v-divider vertical/>
-
         <v-btn
           flat
           @click="clearWorflow"

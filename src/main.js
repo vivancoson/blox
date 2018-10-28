@@ -1,5 +1,12 @@
 import '@babel/polyfill';
 import Vue from 'vue';
+import 'vue2-ace-editor';
+import 'brace/mode/json';
+import 'brace/theme/twilight';
+import 'brace/snippets/json';
+import 'brace/ext/language_tools';
+import 'brace/ext/searchbox';
+
 import './plugins/vuetify';
 import './plugins/vue-drag-drop';
 import App from './App.vue';
