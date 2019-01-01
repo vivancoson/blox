@@ -47,7 +47,7 @@ export default {
         const { def } = data;
         const id = this.uuidService.uuid();
         const name = `${def.name}_${id.substring(30)}`;
-        const block = new Block(id, name, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions);
+        const block = new Block(id, name, def.type, def.clazz, _.cloneDeep(def.config), def.details, def.suggestions, [], [], _.cloneDeep(def.editables));
         block.setPosition(event.offsetX - 90, event.offsetY - 75);
         this.addBlockToWorkflow(block);
       }

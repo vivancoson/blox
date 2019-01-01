@@ -62,10 +62,10 @@ export default class BlockService {
                 const suggestions = data.dict[group] || {};
                 const description = value[bloc].description || '';
                 const details = value[bloc].details || {};
+                const editables = value[bloc].editables || {};
                 const { color } = constants.blockTypes[type];
                 _.forOwn(config, (e) => {
                   suggestions[e] = suggestions[e] || [];
-                  details[e] = details[e] || {};
                 });
                 result.push({
                   name,
@@ -75,6 +75,7 @@ export default class BlockService {
                   color,
                   description,
                   details,
+                  editables,
                   suggestions,
                 });
               }

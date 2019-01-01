@@ -18,6 +18,9 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12>
+                  <h3>Information:</h3>
+                </v-flex>
+                <v-flex xs12>
                   <v-text-field
                     v-model="blockCopy.name"
                     :rules="[() => !!blockCopy.name || 'Veuillez entrer un nom']"
@@ -32,9 +35,7 @@
                     hint="Classe du bloc"
                     required
                   />
-                  <v-flex xs12>
-                    <h3>Config:</h3>
-                  </v-flex>
+                  <h3>Config:</h3>
                   <div
                     v-for="(value, key) in blockCopy.fields"
                     :key="key">
@@ -51,6 +52,15 @@
                       v-model="blockCopy.fields[key]"
                       :hint="blockCopy.details[key].description | capitalize"
                       :items="blockCopy.suggestions[key]"
+                    />
+                    <editor
+                      v-if="blockCopy.editables[key]"
+                      ref="editor"
+                      v-model="blockCopy.editables[key].value"
+                      :options="options"
+                      :lang="blockCopy.editables[key].language"
+                      theme="twilight"
+                      height="150"
                     />
                   </div>
                 </v-flex>
@@ -139,5 +149,8 @@ export default {
 .headline {
   overflow: hidden;
   overflow-wrap: break-word;
+}
+.ace_editor {
+  margin-top: 10px;
 }
 </style>
