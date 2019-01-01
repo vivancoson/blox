@@ -1,5 +1,6 @@
 <template>
   <v-layout
+    v-show="!block.filtered"
     :style="blockPosition"
     class="mainboard-block elevation-10">
     <v-flex>
@@ -48,6 +49,20 @@
             </v-btn>
             <span>Supprimer</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <v-btn
+              slot="activator"
+              icon
+              @click="showConnections">
+              <v-icon
+                v-show="selectedBlockConnections === block.id"
+                medium>turned_in</v-icon>
+              <v-icon
+                v-show="selectedBlockConnections !== block.id"
+                medium>turned_in_not</v-icon>
+            </v-btn>
+            <span>Liaisons</span>
+          </v-tooltip>
         </v-card-actions>
 
         <v-slide-y-transition>
@@ -65,12 +80,12 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import constants from '../../constants/constants';
 
 export default {
   name: 'ZMainBlock',
-  inject: ['jsPlumbService'],
+  inject: ['jsPlumbService', 'blockService'],
   props: {
     block: {
       type: Object,
@@ -98,6 +113,10 @@ export default {
       }
       return 'no-class-found';
     },
+    ...mapState([
+      'selectedBlockConnections',
+      'blockInWorkflow',
+    ]),
   },
   beforeMount() {
     this.setBlockPosition(this.block.positionX, this.block.positionY);
@@ -122,10 +141,23 @@ export default {
       this.blockPosition.left = `${left}px`;
       this.blockPosition.top = `${top}px`;
     },
+    showConnections() {
+      this.setSelectedBlockConnections(this.block.id);
+      this.setShownBlocks(this.block);
+      this.$nextTick(() => {
+        if (this.selectedBlockConnections) {
+          this.jsPlumbService.removeFilteredConnections(this.blockInWorkflow);
+        } else {
+          this.jsPlumbService.showAllConnections();
+        }
+      });
+    },
     ...mapMutations([
       'removeBlockInWorkflow',
       'setCurrentBlock',
       'setModalFormOpen',
+      'setSelectedBlockConnections',
+      'setShownBlocks',
     ]),
   },
 };

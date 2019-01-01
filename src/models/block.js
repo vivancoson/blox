@@ -6,7 +6,7 @@ function setupBlock(block) {
 }
 
 export default class Block {
-  constructor(id, name, type, clazz, fields, details = {}, suggestions = {}) {
+  constructor(id, name, type, clazz, fields, details = {}, suggestions = {}, sources = [], targets = []) {
     this.id = id;
     this.name = name;
     this.type = type;
@@ -14,6 +14,9 @@ export default class Block {
     this.fields = fields;
     this.details = details;
     this.suggestions = suggestions;
+    this.sources = sources;
+    this.targets = targets;
+    this.filtered = false;
     setupBlock(this);
   }
 
