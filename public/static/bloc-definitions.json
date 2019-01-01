@@ -156,6 +156,12 @@
       "config": {
         "mapper": ""
       },
+      "editables": {
+        "mapper": {
+          "value": "{}",
+          "language": "json"
+        }
+      },
       "group": "mapper",
       "description": "transforms the source based on a json document",
       "details": {

@@ -89,6 +89,9 @@ export default new Vuex.Store({
       for (const key in payload.fields) {
         if ({}.hasOwnProperty.call(payload.fields, key)) {
           block.fields[key] = payload.fields[key];
+          if ({}.hasOwnProperty.call(payload.editables, key)) {
+            block.editables[key] = payload.editables[key];
+          }
         }
       }
     },

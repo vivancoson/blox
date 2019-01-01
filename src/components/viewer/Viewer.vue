@@ -39,7 +39,7 @@ import { mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'ZViewer',
-  inject: ['generatorService', 'jsPlumbService'],
+  inject: ['generatorService', 'jsPlumbService', 'fileService'],
   data() {
     return {
       generatedYaml: '',
@@ -83,15 +83,15 @@ export default {
         this.jsPlumbService.getAllConnections(),
       );
     },
-    downloadYaml() {
-      const filename = 'workflow.yaml';
-      const file = new Blob([this.generatedYaml], { type: 'application/x-yaml;charset=utf-8' });
-
+    async downloadYaml() {
+      const filename = 'workflow.zip';
+      const workflowName = 'workflow.yaml';
+      const content = await this.fileService.makeArchive(workflowName, this.generatedYaml, this.blockInWorkflow);
       if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(file, filename);
+        window.navigator.msSaveOrOpenBlob(content, filename);
       } else {
         const a = document.createElement('a');
-        const url = URL.createObjectURL(file);
+        const url = URL.createObjectURL(content);
         a.href = url;
         a.download = filename;
         document.body.appendChild(a);
